@@ -72,14 +72,12 @@ export class AdvancedSearchComponent extends AppComponentBase implements OnInit 
 
         // If all parameters are empty, return documents list
         if (!Object.keys(this.searchParams).length) {
-            console.log("EMPTY");
+            this.noResultsFound = false;
             return;
         }
         this.results = this.documents.filter( document => {
             // Have not checked data is deleted or not
             for (let key in this.searchParams) {
-                console.log(key);
-                console.log(this.searchParams[key]);
                 if (document[key] !== this.searchParams[key]) {
                     if (key === 'effectiveDate' && document.effectiveDate.toSQLDate() !== this.searchParams[key]) {
                         return false;
@@ -131,11 +129,9 @@ export class AdvancedSearchComponent extends AppComponentBase implements OnInit 
     
     // Organization Search
     fetchOrganization(): void {
-        console.log("FETCH");
         if (this.searchParams.organization === '') this.showOrganizationOptions = false;
         if (this.showOrganizationOptions) {
             const wordSearch = this.searchParams.organization.trim().toLowerCase().split(' ').filter(word => word !== '');
-            console.log(wordSearch);
             this.organizationOptions = [...new Set(this.documents.map(obj => obj.organization))].filter(suggestion => {
                 const words = suggestion.toLowerCase().split(' ');
                 if (wordSearch.length <= words.length) {
@@ -155,11 +151,9 @@ export class AdvancedSearchComponent extends AppComponentBase implements OnInit 
 
     // Title Search
     fetchTitle(): void {
-        console.log("FETCH");
         if (this.searchParams.title === '') this.showTitleOptions = false;
         if (this.showTitleOptions) {
             const wordSearch = this.searchParams.title.trim().toLowerCase().split(' ').filter(word => word !== '');
-            console.log(wordSearch);
             this.titleOptions = [...new Set(this.documents.map(obj => obj.title))].filter(suggestion => {
                 const words = suggestion.toLowerCase().split(' ');
                 if (wordSearch.length <= words.length) {
@@ -179,11 +173,9 @@ export class AdvancedSearchComponent extends AppComponentBase implements OnInit 
 
     // Code Search
     fetchCode(): void {
-        console.log("FETCH");
         if (this.searchParams.code === '') this.showCodeOptions = false;
         if (this.showCodeOptions) {
             const wordSearch = this.searchParams.code.trim().toLowerCase();
-            console.log(wordSearch);
             this.codeOptions = [...new Set(this.documents.map(obj => obj.code))].filter(suggestion => {
                 if (suggestion.startsWith(wordSearch)) return true;
                 return false;
