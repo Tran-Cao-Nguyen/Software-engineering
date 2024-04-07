@@ -15903,6 +15903,7 @@ export class CreateFriendshipRequestByUserNameInput implements ICreateFriendship
 
 
 export interface ICreateDocumentInput{
+    id : Number;
     title: string;
     code: string;
     releaseDate: Date;
@@ -15910,10 +15911,11 @@ export interface ICreateDocumentInput{
     effectiveDate: Date;
     expirationDate: Date;
     type: string;
-    filename: string;
+    fileName: string;
     citation: string;
 }
 export class CreateDocumentInput implements ICreateDocumentInput {
+    id!: Number;
     title!: string;
     code!: string;
     releaseDate!: Date;
@@ -15921,7 +15923,7 @@ export class CreateDocumentInput implements ICreateDocumentInput {
     effectiveDate!: Date;
     expirationDate!: Date;
     type!:string;
-    filename!:string;
+    fileName!:string;
     citation!: string;
 
     constructor(data?: ICreateDocumentInput) {
@@ -15935,6 +15937,7 @@ export class CreateDocumentInput implements ICreateDocumentInput {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.title = _data["title"];
             this.code = _data["code"];
             this.releaseDate = _data["releaseDate"];
@@ -15942,7 +15945,7 @@ export class CreateDocumentInput implements ICreateDocumentInput {
             this.effectiveDate = _data["effectiveDate"];
             this.expirationDate = _data["expirationDate"];
             this.type = _data["type"];
-            this.filename = _data["filename"];
+            this.fileName = _data["filename"];
             this.citation = _data["citation"];
         }
     }
@@ -15956,6 +15959,7 @@ export class CreateDocumentInput implements ICreateDocumentInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["title"] = this.title;
         data["code"] = this.code;
         data["releaseDate"] = this.releaseDate;
@@ -15963,7 +15967,7 @@ export class CreateDocumentInput implements ICreateDocumentInput {
         data["effectiveDate"] = this.effectiveDate;
         data["expirationDate"] = this.expirationDate;
         data["type"] = this.type;
-        data["filename"] = this.filename;
+        data["filename"] = this.fileName;
         data["citation"] = this.citation;
         return data; 
     }
