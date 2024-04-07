@@ -12,6 +12,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     documents: DocumentListDto[] = [];
     filter: string = '';
     documentsWithoutFilter: any = [];
+    suggestDocuments: DocumentListDto[];
+    selectedDocuments: any;
 
     constructor(
         injector: Injector,
@@ -22,6 +24,26 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this.getDocuments();
+    }
+
+    filterDocumentForSuggestion(event) {
+        const filterValue = event.query.toLowerCase();
+        this.suggestDocuments = this.documentsWithoutFilter.filter(option => option.title.toLowerCase().startsWith(filterValue));
+    }
+
+    onSearchSubmit(event): void {
+        const filter = event
+        this._DocumentService.getDocuments(filter).subscribe((result) => {
+            this.documents = result.items;
+        });
+      }
+
+    onClickSearchButton(): void {
+        console.log(this.selectedDocuments)
+        const filter = typeof this.selectedDocuments == 'string' ? this.selectedDocuments : this.selectedDocuments?.title
+        this._DocumentService.getDocuments(filter).subscribe((result) => {
+            this.documents = result.items;
+        });
     }
 
     getDocuments(): void {
