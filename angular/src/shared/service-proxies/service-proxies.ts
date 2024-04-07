@@ -15903,25 +15903,25 @@ export class CreateFriendshipRequestByUserNameInput implements ICreateFriendship
 
 
 export interface ICreateDocumentInput{
-    id : Number;
+    id : number;
     title: string;
     code: string;
-    releaseDate: Date;
+    releaseDate: DateTime;
     organization: string;
-    effectiveDate: Date;
-    expirationDate: Date;
+    effectiveDate: DateTime;
+    expirationDate: DateTime;
     type: string;
     fileName: string;
     citation: string;
 }
 export class CreateDocumentInput implements ICreateDocumentInput {
-    id!: Number;
+    id!: number;
     title!: string;
     code!: string;
-    releaseDate!: Date;
+    releaseDate!: DateTime;
     organization!: string;
-    effectiveDate!: Date;
-    expirationDate!: Date;
+    effectiveDate!: DateTime;
+    expirationDate!: DateTime;
     type!:string;
     fileName!:string;
     citation!: string;
