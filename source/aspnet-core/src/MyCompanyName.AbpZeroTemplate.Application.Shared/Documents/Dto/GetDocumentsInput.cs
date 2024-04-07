@@ -8,4 +8,9 @@ namespace MyCompanyName.AbpZeroTemplate.Documents.Dto
     {
         public string Filter { get; set; }
     }
+    // Download
+    public class GetDocumentDownload
+    {
+        public int Id { get; set; }
+    }
 }
