@@ -132,7 +132,12 @@
         <div class="content d-flex flex-column flex-column-fluid">
             <sub-header [title]="'Documents' | localize">
                 <div role="actions">
-                    <button *ngIf="'Pages.Administration.Users.Create' | permission" class="btn btn-primary">
+                    <button 
+                    *ngIf="'Pages.Administration.Users.Create' | permission"
+                    class="btn btn-primary"
+                    (click)="createDocument()"
+                    >
+                    
                         <i class="fa fa-plus"></i>
                         Thêm văn bản pháp lý
                     </button>
@@ -293,3 +298,6 @@
         </div>
     </div>
 </div>
+
+
+<app-create-document #createDocumentModal></app-create-document>

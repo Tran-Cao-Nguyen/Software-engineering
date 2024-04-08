@@ -4,6 +4,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DocumentServiceProxy, DocumentListDto, ListResultDtoOfDocumentListDto } from '@shared/service-proxies/service-proxies';
 import { ViewDocumentModalComponent } from './view-document-modal.component';
 
+import { CreateDocumentComponent } from './create-document/create-document.component';
 @Component({
     templateUrl: './documents.component.html',
     animations: [appModuleAnimation()]
@@ -11,6 +12,7 @@ import { ViewDocumentModalComponent } from './view-document-modal.component';
 export class DocumentsComponent extends AppComponentBase implements OnInit {
     @ViewChild(ViewDocumentModalComponent)
     private viewDocumentModal !: ViewDocumentModalComponent;
+    @ViewChild('createDocumentModal', { static: false }) createDocumentModal: CreateDocumentComponent;
 
     documents: DocumentListDto[] = [];
     filter: string = '';
@@ -88,6 +90,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
             default:
                 break;
         }
+    }
+    createDocument(): void {
+        this.createDocumentModal.show();
     }
 }
 

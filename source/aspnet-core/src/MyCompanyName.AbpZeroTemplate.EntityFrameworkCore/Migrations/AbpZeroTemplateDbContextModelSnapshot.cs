@@ -1766,6 +1766,8 @@ namespace MyCompanyName.AbpZeroTemplate.Migrations
                     b.ToTable("AppChatMessages");
                 });
 
+            
+
             modelBuilder.Entity("MyCompanyName.AbpZeroTemplate.Friendships.Friendship", b =>
                 {
                     b.Property<long>("Id")
