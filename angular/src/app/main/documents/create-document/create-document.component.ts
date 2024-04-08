@@ -1,7 +1,6 @@
 import { ElementRef , Component, EventEmitter, Injector, Output, ViewChild ,ViewEncapsulation,OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import {
-    CreateDocumentInput, 
+import { 
     DocumentServiceProxy,  
 } from '@shared/service-proxies/service-proxies';
 import { filter as _filter } from 'lodash-es';
@@ -9,6 +8,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
 import { LoaiVanBanComponent } from '../loai-van-ban/loai-van-ban.component';
 import Swal from 'sweetalert2'
+import { CreateDocumentInput } from '../createDocInput/ceateDocumentInput';
 
 @Component({
   selector: 'app-create-document',
