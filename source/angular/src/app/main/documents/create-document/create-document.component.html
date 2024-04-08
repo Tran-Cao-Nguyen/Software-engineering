@@ -1,0 +1,176 @@
+<style>
+  @keyframes fadeOutText {
+      0% { color: red; }
+      100% { color: transparent; }
+  }
+  .siba-text {
+      animation: fadeOutText 1s forwards; /* Sử dụng keyframes animation để làm mờ màu chữ */
+  }
+</style>
+<div
+  appBsModal
+  #createModal="bs-modal"
+  (onShown)="onShown()"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="createModal"
+  aria-hidden="true"
+  [config]="{ backdrop: 'static', keyboard: !saving }"
+>
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <form
+                #documentCreateForm="ngForm"
+                role="form"
+                novalidate
+                class="form-validation"
+                *ngIf="active"
+                (submit)="save()"
+          >
+              <div class="modal-header">
+                  <h5 class="modal-title">
+                      <span>{{ 'Thêm văn bản pháp lý' | localize }}</span>
+                  </h5>
+                  <button
+                      type="button"
+                      class="btn-close"
+                      (click)="close()"
+                      [attr.aria-label]="l('Close')"
+                      [disabled]="saving"
+                  >
+                  </button>
+              </div>
+
+              <div class="modal-body">
+                  <div class="mb-5">
+                    <label for="sohieu">{{ 'Số hiệu văn bản' | localize }} *</label>
+                    <input
+                        id="sohieu"
+                        #sohieu="ngModel"
+                        class="form-control"
+                        type="text"
+                        [ngClass]="{ edited: legaldoc.code }"
+                        name="sohieu"
+                        [(ngModel)]="legaldoc.code"
+                        #tenancyName="ngModel"
+                        required
+                        maxlength="50"
+                        (input)="checkValidSoHieuVanBan()"
+                    
+                    />
+                    <validation-messages [formCtrl]="sohieu"></validation-messages>
+                    <div *ngIf="!isValidSoHieuVanBan" class="form-control-feedback" >  {{errorSoHieuVanBan}} </div>
+                  </div>
+                  <div>
+                  </div>
+
+                  <div class="mb-5">
+                      <label for="tieude">{{ 'Tiêu đề' | localize }} *</label>
+                      <input
+                          id="tieude"
+                          #tieude="ngModel"
+                          type="text"
+                          name="tieude"
+                          class="form-control"
+                          [ngClass]="{ edited: legaldoc.title }"
+                          [(ngModel)]="legaldoc.title"
+                          required
+                          maxlength="50"
+                      />
+                      <validation-messages [formCtrl]="tieude"></validation-messages>
+                  </div>
+
+                  <div class="mb-5">
+                      <label for="trichyeu">{{ 'Trích yếu' | localize }} *</label>
+                      <input
+                          id="trichyeu"
+                          #trichyeu="ngModel"
+                          type="text"
+                          name="trichyeu"
+                          class="form-control"
+                          [ngClass]="{ edited: legaldoc.citation }"
+                          [(ngModel)]="legaldoc.citation"
+                          required
+                          maxlength="100"
+                      />
+                      <validation-messages [formCtrl]="trichyeu"></validation-messages>
+                  </div>
+                  <app-loai-van-ban #loaiVanBan></app-loai-van-ban>
+                  <div class="mb-5" style="display: flex; justify-content: space-between;">
+                      <div style="width: 45%;">
+                          <label for="EffectDay">{{ 'Ngày hiệu lực' | localize }} *</label>
+                          <input
+                              #EffectDayInput
+                              mask="00/00/0000" 
+                              placeholder="mm/dd/yyyy" 
+                              id="EffectDay"
+                              name="EffectDay"
+                              #EffectDay="ngModel"
+                              class="form-control"
+                              bsDatepicker   
+                              datePickerLuxonModifier 
+                              [(ngModel)]="legaldoc.effectiveDate"
+                              [bsConfig]="{ adaptivePosition: true }"
+                              (keypress)="onlyNumber($event)"
+                              (blur)="formatDate_EffectDay($event)"
+                              maxlength="8"
+                              required
+                          />
+                          <validation-messages [formCtrl]="EffectDay"></validation-messages>
+                          <div *ngIf="showEffectDayMessage" class="has-danger form-control-feedback">You need to fill the effect day first.</div>
+                      </div>
+                      <div style="width: 45%;">
+                          <label for="EndDay">{{ 'Ngày hết hiệu lực' | localize }} *</label>
+                          <input
+                              mask="00/00/0000" 
+                              placeholder="mm/dd/yyyy"
+                              id="EndDay"
+                              type="datetime"
+                              #EndDay="ngModel"
+                              name="EndDay"
+                              class="form-control"
+                              bsDatepicker
+                              datePickerLuxonModifier
+                              [(ngModel)]="legaldoc.expirationDate"
+                              [bsConfig]="{ adaptivePosition: true }"
+                              (keypress)="onlyNumber($event)"
+                              (blur)="formatDate_EndDay($event)"
+                              (dpChange)="formatDate_EndDay($event)"
+                              (focus)="checkEffectDayFilled()"
+                              maxlength="8"
+                              (input)="setCheckSmaller()"
+                          />
+                          <validation-messages [formCtrl]="EndDay"></validation-messages>
+                          <div *ngIf="checksmaller" class="has-danger form-control-feedback">End day can't smaller than effect day.</div>
+                      </div>                  
+                  </div>
+              </div>
+
+              
+              <div class="modal-footer">
+                  <button
+                      type="button"
+                      [disabled]="saving"
+                      class="btn btn-light-primary font-weight-bold"
+                      (click)="close()"
+                  >
+                      {{ 'Cancel' | localize }}
+                  </button>
+                  <button
+                      type="submit"
+                      [buttonBusy]="saving"
+                      [busyText]="l('SavingWithThreeDot')"
+                      class="btn btn-primary font-weight-bold"
+                      [disabled]="( !documentCreateForm.form.valid || !isValidSoHieuVanBan || saving || isLoaiVanBanFilled())"
+                      
+                  >
+                      <i class="fa fa-save"></i>
+                      <span>{{ 'Save' | localize }}</span>
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
