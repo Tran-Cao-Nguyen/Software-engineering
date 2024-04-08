@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <style>
         .button-group {
             width: 100%;
@@ -21,46 +21,123 @@
                 overflow-y: scroll !important;
             }
         }
-    </style>    
+        p-autocomplete {
+            padding: 0px;
+            padding-right: 20px;
+            font-size: 14px;
+        }
+    </style>
 </head>
-    <div class="table-container">
-        <div class="button-group">
-            <form>
-                <div style="display: flex; align-items: center; justify-content: center;">
-                    <input type="text" id="search" name="vanban" style="flex: 1; margin-right: 20px; height: 43px; width: 955px; border-radius: 5px; border: 1px solid #ccc;" placeholder="Tìm kiếm...">
-                    <button type="submit" style="padding: 10px; background-color: #0099FF; color: white; font-size: 14px; border: none; cursor: pointer; transition: background-color 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#3498db'" onmouseout="this.style.backgroundColor= '#0099FF'">
-                        Tìm kiếm
+<div class="table-container">
+    <div class="button-group">
+        <div style="display: flex; align-items: center; justify-content: center">
+            <div class="p-inputgroup">
+                <p-autoComplete
+                    [(ngModel)]="selectedDocuments"
+                    [suggestions]="suggestDocuments"
+                    (completeMethod)="filterDocumentForSuggestion($event)"
+                    field="title"
+                    placeholder="Tìm kiếm..."
+                    autoHighlight="true"
+                    (keydown.enter)="onSearchSubmit($event.target.value)"
+                    [forceSelection]="false"
+                    [minLength]="2"
+                    [style]="{ width: '100%' }"
+                    [inputStyle]="{
+                        width: '100%',
+                        'border-radius': '5px',
+                        border: '1px solid #ccc'
+                    }"
+                    padding="0px"
+                    id="search"
+                >
+                    <ng-template let-document pTemplate="item">
+                        <div>{{ document.title }}</div>
+                    </ng-template>
+                </p-autoComplete>
+                <button
+                    pButton
+                    type="button"
+                    label="Tìm kiếm"
+                    (click)="onClickSearchButton()"
+                    style="
+                        background-color: #0099ff;
+                        color: white;
+                        font-size: 14px;
+                        border: none;
+                        cursor: pointer;
+                        padding-left: 11px;
+                        padding-right: 11px;
+                        transition: background-color 0.3s;
+                        border-radius: 5px;
+                    "
+                    onmouseover="this.style.backgroundColor='#3498db'"
+                    onmouseout="this.style.backgroundColor= '#0099FF'"
+                ></button>
+            </div>
+        </div>
+        <form>
+            <div style="display: flex; align-items: center">
+                <div style="margin-right: auto">
+                    &#x25BE;
+                    <button
+                        type="submit"
+                        style="background-color: transparent; border: none; cursor: pointer; color: #999"
+                    >
+                        Tìm kiếm nâng cao
                     </button>
                 </div>
-
-                <div style="display: flex; align-items: center;">
-                    <div style="margin-right: auto;">&#x25BE;<button type="submit" style=" background-color: transparent; border: none; cursor: pointer;color: #999;">Tìm kiếm nâng cao</button></div>
-                    <div class="button-container" style="margin-top: 20px;">
-                        <button type="submit" style="padding: 10px 30px; margin-right: 20px; background-color: #f70c47; color: white; font-size: 14px; border: none; cursor: pointer; transition: background-color 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#ba0633'" onmouseout="this.style.backgroundColor='#f70c47'">
-                            Xóa
-                        </button>
-                        <button type="submit" style="padding: 10px 20px; background-color: #07c938; color: white; font-size: 14px; border: none; cursor: pointer; transition: background-color 0.3s; border-radius: 5px;" onmouseover="this.style.backgroundColor='#06b131'" onmouseout="this.style.backgroundColor='#07c938'">
-                            Tải xuống
-                        </button>
-                    </div>
+                <div class="button-container" style="margin-top: 20px">
+                    <button
+                        type="submit"
+                        style="
+                            padding: 10px 30px;
+                            margin-right: 20px;
+                            background-color: #f70c47;
+                            color: white;
+                            font-size: 14px;
+                            border: none;
+                            cursor: pointer;
+                            transition: background-color 0.3s;
+                            border-radius: 5px;
+                        "
+                        onmouseover="this.style.backgroundColor='#ba0633'"
+                        onmouseout="this.style.backgroundColor='#f70c47'"
+                    >
+                        Xóa
+                    </button>
+                    <button
+                        type="submit"
+                        style="
+                            padding: 10px 20px;
+                            background-color: #07c938;
+                            color: white;
+                            font-size: 14px;
+                            border: none;
+                            cursor: pointer;
+                            transition: background-color 0.3s;
+                            border-radius: 5px;
+                        "
+                        onmouseover="this.style.backgroundColor='#06b131'"
+                        onmouseout="this.style.backgroundColor='#07c938'"
+                    >
+                        Tải xuống
+                    </button>
                 </div>
-
-            </form>
-      </div>
-
-<div [@routerTransition]>
-    <div class="content d-flex flex-column flex-column-fluid">
-        <sub-header [title]="'Documents' | localize">
-            <div role="actions">
-                <button
-                    *ngIf="'Pages.Administration.Users.Create' | permission"
-                    class="btn btn-primary"
-                >
-                    <i class="fa fa-plus"></i>
-                    Thêm văn bản pháp lý
-                </button>
             </div>
-        </sub-header>
+        </form>
+    </div>
+
+    <div [@routerTransition]>
+        <div class="content d-flex flex-column flex-column-fluid">
+            <sub-header [title]="'Documents' | localize">
+                <div role="actions">
+                    <button *ngIf="'Pages.Administration.Users.Create' | permission" class="btn btn-primary">
+                        <i class="fa fa-plus"></i>
+                        Thêm văn bản pháp lý
+                    </button>
+                </div>
+            </sub-header>
 
         <div [class]="containerClass">
             <div class="card card-custom gutter-b">
@@ -204,7 +281,6 @@
                                         <td>{{ document.type }}</td>
                                         <td>{{ document.effectiveDate | date:'dd/MM/yyyy' }}</td>
                                         <td>{{ document.expirationDate | date:'dd/MM/yyyy' }}</td>
-                                        <td>{{ document.fileName }}</td>
                                         <td style="cursor: pointer;" (click)="openPdfInNewTab(document.fileName)">{{ document.fileName }}</td>
                                         <viewDocumentModal [document]="document"></viewDocumentModal>
                                     </tr>
