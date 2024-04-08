@@ -170,6 +170,7 @@
                                                         <a
                                                             href="javascript:;"
                                                             class="dropdown-item"
+                                                            (click)="show()"
                                                         >
                                                             Xem
                                                         </a>
@@ -204,6 +205,8 @@
                                         <td>{{ document.effectiveDate | date:'dd/MM/yyyy' }}</td>
                                         <td>{{ document.expirationDate | date:'dd/MM/yyyy' }}</td>
                                         <td>{{ document.fileName }}</td>
+                                        <td style="cursor: pointer;" (click)="openPdfInNewTab(document.fileName)">{{ document.fileName }}</td>
+                                        <viewDocumentModal [document]="document"></viewDocumentModal>
                                     </tr>
                                 </ng-template>
                             </p-table>
