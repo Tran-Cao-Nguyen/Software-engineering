@@ -1,13 +1,16 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DocumentServiceProxy, DocumentListDto, ListResultDtoOfDocumentListDto } from '@shared/service-proxies/service-proxies';
+import { ViewDocumentModalComponent } from './view-document-modal.component';
 
 @Component({
     templateUrl: './documents.component.html',
     animations: [appModuleAnimation()]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit {
+    @ViewChild(ViewDocumentModalComponent)
+    private viewDocumentModal !: ViewDocumentModalComponent;
 
     documents: DocumentListDto[] = [];
     filter: string = '';
@@ -30,6 +33,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
             this.documentsWithoutFilter = result.items;
         });
     }
+    show(){
+        this.viewDocumentModal.show();
+    }
+    openPdfInNewTab(fileName: string){
+        this.viewDocumentModal.openPdfInNewTab(fileName);
+    }
+
     sortFn(prop: any, asc: any) {
         this.documents = this.documentsWithoutFilter.sort(function (a: any, b: any) {
             if (asc) {

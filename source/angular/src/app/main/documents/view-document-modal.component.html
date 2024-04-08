@@ -1,0 +1,139 @@
+<div
+  appBsModal
+  #viewModal="bs-modal"
+  (onShown)="onShown()"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="createModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <form
+                #documentCreateForm="ngForm"
+                role="form"
+                novalidate
+                class="form-validation"
+                *ngIf="active"
+          >
+              <div class="modal-header">
+                  <h5 class="modal-title">
+                      <span>{{ 'Legal document' | localize }}</span>
+                  </h5>
+                  <button
+                      type="button"
+                      class="btn-close"
+                      (click)="close()"
+                      [attr.aria-label]="l('Close')"
+                  >
+                  </button>
+              </div>
+
+              <div class="modal-body">
+                  <div class="mb-5">
+                    <label for="code">{{ 'Code' | localize }} *</label>
+                    <input
+                        id="code"
+                        #code="ngModel"
+                        class="form-control"
+                        type="text"
+                        name="code"
+                        [(ngModel)]="document.code"
+                        #tenancyName="ngModel"
+                        maxlength="50"
+                        readonly
+                    />
+                  </div>
+
+                  <div class="mb-5">
+                      <label for="title">{{ 'Title' | localize }} *</label>
+                      <input
+                          id="title"
+                          #title="ngModel"
+                          type="text"
+                          name="title"
+                          class="form-control"
+                          [(ngModel)]="document.title"
+                          maxlength="50"
+                          readonly
+                      />
+                  </div>
+
+                  <div class="mb-5">
+                      <label for="citation">{{ 'Citation' | localize }} *</label>
+                      <input
+                          id="citation"
+                          #citation="ngModel"
+                          type="text"
+                          name="citation"
+                          class="form-control"
+                          [(ngModel)]="document.citation"
+                          maxlength="100"
+                          readonly
+                      />
+                  </div>
+                  <div class="mb-5">
+                    <label for="type">{{ 'Type' | localize }} *</label>
+                    <input
+                        id="type"
+                        #type="ngModel"
+                        type="text"
+                        name="type"
+                        class="form-control"
+                        [(ngModel)]="document.type"
+                        maxlength="100"
+                        readonly
+                    />
+                </div>
+                  <div class="mb-5" style="display: flex; justify-content: space-between;">
+                      <div style="width: 45%;">
+                          <label for="effectivedate">{{ 'Effective date' | localize }} *</label>
+                          <input
+                              id="effectivedate"
+                              name="effectivedate"
+                              #effectday="ngModel"
+                              class="form-control"
+                              [(ngModel)]="document.effectiveDate"
+                              readonly
+                          />
+                      </div>
+                      <div style="width: 45%;">
+                          <label for="expirationdate">{{ 'Expiration date' | localize }} *</label>
+                          <input
+                              id="expirationdate"
+                              type="text"
+                              #expirationdate="ngModel"
+                              name="expirationdate"
+                              class="form-control"
+                              [(ngModel)]="document.expirationDate"
+                              readonly
+                          />
+                      </div>   
+                  </div>
+                  <div class="mb-5">
+                    <label style="display: block; margin-bottom: 10px;" for="filename">{{ 'File name' | localize }} *</label>
+                    <div style="display: flex; align-items: center; cursor: pointer;" (click)="openPdfInNewTab(document.fileName)">
+                        <i style="font-size: 32px; margin-right: 10px;" class="flaticon2-copy"></i> <!-- Đặt biểu tượng ở dưới label và chuyển sang dạng block để nằm trên một dòng mới -->
+                        <p style="margin: 0;">{{document.fileName}}</p>
+                    </div>
+                </div>
+                
+                
+                
+              </div>
+
+              
+              <div class="modal-footer">
+                  <button
+                      type="button"
+                      class="btn btn-light-primary font-weight-bold"
+                      (click)="close()"
+                  >
+                      {{ 'Cancel' | localize }}
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
