@@ -37,7 +37,7 @@ namespace MyCompanyName.AbpZeroTemplate.DemoUiComponents
         }
         #endregion
 
-        public List<NameValue<string>> GetCountries(string searchTerm = "")
+        public List<NameValue<string>> GetCountries(string searchTerm)
         {
             var countries = new List<NameValue<string>>
             {

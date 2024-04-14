@@ -28,6 +28,8 @@ namespace MyCompanyName.AbpZeroTemplate.Migrations.Seed.Host
                         Organization = "ABC hospital",
                         ReleaseDate = DateTime.Now,
                         Type = "Legal document",
+                        FileName = "sample.pdf",
+                        Citation = "Law",
                     });
             }
 
@@ -42,6 +44,8 @@ namespace MyCompanyName.AbpZeroTemplate.Migrations.Seed.Host
                         Organization = "DEF hospital",
                         ReleaseDate = DateTime.Now,
                         Type = "Legal document",
+                        FileName = "sample.pdf",
+                        Citation = "Law",
                     });
             }
         }

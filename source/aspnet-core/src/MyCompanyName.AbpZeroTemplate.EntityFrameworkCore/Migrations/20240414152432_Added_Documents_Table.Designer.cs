@@ -12,7 +12,7 @@ using MyCompanyName.AbpZeroTemplate.EntityFrameworkCore;
 namespace MyCompanyName.AbpZeroTemplate.Migrations
 {
     [DbContext(typeof(AbpZeroTemplateDbContext))]
-    [Migration("20240314155932_Added_Documents_Table")]
+    [Migration("20240414152432_Added_Documents_Table")]
     partial class Added_Documents_Table
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1776,6 +1776,11 @@ namespace MyCompanyName.AbpZeroTemplate.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Citation")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -1800,6 +1805,11 @@ namespace MyCompanyName.AbpZeroTemplate.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasMaxLength(32)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

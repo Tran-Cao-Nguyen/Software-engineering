@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Castle.Core.Internal;
@@ -15,16 +16,16 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
 {
     public class DocumentAppService: AbpZeroTemplateAppServiceBase, IDocumentAppServive
     {
-        private readonly IRepository<Document> _documentRepository;
+        private readonly IRepository<Document> _DocumentRepository;
 
         public DocumentAppService(IRepository<Document> DocumentRepository)
         {
-            _documentRepository = DocumentRepository;
+            _DocumentRepository = DocumentRepository;
         }
 
         public ListResultDto<DocumentListDto> GetDocuments(GetDocumentsInput input)
         {
-            var documents = _documentRepository
+            var documents = _DocumentRepository
                 .GetAll()
                 .WhereIf(
                     !input.Filter.IsNullOrEmpty(),
@@ -40,6 +41,21 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
 
             return new ListResultDto<DocumentListDto>(ObjectMapper.Map<List<DocumentListDto>>(documents));
         }
-
+        public async Task CreateDocuments(DocumentListDto input)
+        {
+            await _DocumentRepository.InsertAsync(new Document
+            {
+                Title = input.Title,
+                ReleaseDate = DateTime.UtcNow,
+                EffectiveDate = input.EffectiveDate,
+                ExpirationDate = input.ExpirationDate,
+                Type = input.Type,
+                Code = input.Code,
+                Citation = input.Citation,
+                Organization = "HCMUT", // dont have field organization
+                FileName = "123.txt",  // Group 10 code field FileName 
+            });
+            await CurrentUnitOfWork.SaveChangesAsync();
+        }
     }
 }

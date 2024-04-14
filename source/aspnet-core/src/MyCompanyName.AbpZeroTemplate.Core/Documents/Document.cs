@@ -15,6 +15,8 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
         public const int MaxEffectiveDateLength = 32;
         public const int MaxExpirationDateLength = 32;
         public const int MaxTypeLength = 32;
+        public const int MaxFileNameLength = 255;
+        public const int MaxCitationLength = 32;
         
 
         [Required]
@@ -44,6 +46,14 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
         [Required]
         [MaxLength(MaxTypeLength)]
         public virtual string Type { get; set; }
+
+        [Required]
+        [MaxLength(MaxFileNameLength)]
+        public virtual string FileName { get; set; }
+
+        [Required]
+        [MaxLength(MaxCitationLength)]
+        public virtual string Citation { get; set; }
 
 
 
