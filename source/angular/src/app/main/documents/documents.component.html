@@ -1,20 +1,413 @@
-<div [@routerTransition]>
-    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
-        <div class="kt-subheader kt-grid__item">
-            <div class="kt-container ">
-                <div class="kt-subheader__main">
-                    <h3 class="kt-subheader__title">
-                        <span>{{"Tim kiem nang cao" | localize}}</span>
-                    </h3>
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .button-group {
+            width: 100%;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0px;
+        }
+        .table-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        p-table {
+            cdk-virtual-scroll-viewport {
+                overflow-y: scroll !important;
+            }
+        }
+        p-autocomplete {
+            padding: 0px;
+            padding-right: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<div class="table-container">
+    <div class="table-container-inner">
+        <div class="button-group">
+            <div style="display: flex; align-items: center; justify-content: center">
+                <div class="p-inputgroup">
+                    <p-autoComplete
+                        [(ngModel)]="selectedDocuments"
+                        [suggestions]="suggestDocuments"
+                        (completeMethod)="filterDocumentForSuggestion($event)"
+                        field="title"
+                        placeholder="Tìm kiếm..."
+                        autoHighlight="true"
+                        (keydown.enter)="onSearchSubmit($event.target.value)"
+                        [forceSelection]="false"
+                        [minLength]="2"
+                        [style]="{ width: '100%' }"
+                        [inputStyle]="{
+                            width: '100%',
+                            'border-radius': '5px',
+                            border: '1px solid #ccc'
+                        }"
+                        padding="0px"
+                        id="search"
+                        (onFocus) = "advancedSearch = false;"
+                    >
+                        <ng-template let-document pTemplate="item">
+                            <div>{{ document.title }}</div>
+                        </ng-template>
+                    </p-autoComplete>
+                    <button
+                        pButton
+                        type="button"
+                        label="Tìm kiếm"
+                        (click)="handleSearchButton()"
+                        style="
+                            background-color: #0099ff;
+                            color: white;
+                            font-size: 14px;
+                            border: none;
+                            cursor: pointer;
+                            padding-left: 11px;
+                            padding-right: 11px;
+                            transition: background-color 0.3s;
+                            border-radius: 5px;
+                        "
+                        onmouseover="this.style.backgroundColor='#3498db'"
+                        onmouseout="this.style.backgroundColor= '#0099FF'"
+                    ></button>
                 </div>
             </div>
         </div>
-        <div class="kt-container kt-grid__item kt-grid__item--fluid">
-            <div class="kt-portlet kt-portlet--mobile">
-                <div class="kt-portlet__body  kt-portlet__body--fit">
-                    <AdvancedSearchComponent></AdvancedSearchComponent>
+        <div class="AdvancedSearch">
+            <div class="search-container" *ngIf="advancedSearch">
+                <div class="flex-container">
+                    <div class="input-field">
+                        <div class="title-field">
+                            <p class="title-input">Số hiệu văn bản</p>
+                        </div>
+                        <div class="text-field">
+                            <input type="text" name="search" class="search-bar" [value]="searchParams.code ?? ''" (input)="onCodeChange($event.target.value); showCodeOptions = true; fetchCode()" (blur)="onBlurCode()">
+                            <div class="options-list" *ngIf="showCodeOptions">
+                                <table>
+                                    <tr *ngFor="let option of codeOptions" (click)="onCodeChange(option); showCodeOptions = false">
+                                        <td>{{ option }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <div class="title-field">
+                            <p class="title-input">Tiêu đề</p>
+                        </div>
+                        <div class="text-field">
+                            <input type="text" name="search" class="search-bar" [value]="searchParams.title ?? ''" (input)="onTitleChange($event.target.value); showTitleOptions = true; fetchTitle()" (blur)="onBlurTitle()">
+                            <div class="options-list" *ngIf="showTitleOptions">
+                                <table>
+                                    <tr *ngFor="let option of titleOptions" (click)="onTitleChange(option); showTitleOptions = false">
+                                        <td>{{ option }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-container">
+                    <div class="input-field">
+                        <div class="title-field">
+                            <p class="title-input">Trích yếu</p>
+                        </div>
+                        <div class="text-field">
+                            <input type="text" name="search" class="search-bar" [value]="searchParams.organization ?? ''" (input)="onOrganizationChange($event.target.value); showOrganizationOptions = true; fetchOrganization()" (blur)="onBlurOrganization()">
+                            <div class="options-list" *ngIf="showOrganizationOptions">
+                                <table>
+                                    <tr *ngFor="let option of organizationOptions" (click)="onOrganizationChange(option); showOrganizationOptions = false">
+                                        <td>{{ option }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <div class="title-field">
+                            <p class="title-input">Loại văn bản</p>
+                        </div>
+                        <div class="text-field">
+                            <input type="text" id="searchType" name="search" class="search-bar" [value] = "searchParams.type ?? ''" (input)="onTypeChange($event.target.value)" (focus)="fetchTypeOption()" (blur)="onBlurType()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="9" height="7" viewBox="0 0 9 7" fill="none" (click)="toggleFocus()">
+                                <path d="M1.54578 1.28003L4.82254 5.78003L8.0993 1.28003" stroke="#78829D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div class="options-list" *ngIf="showTypeOptions">
+                                <table>
+                                    <tr *ngFor="let option of typeOptions" (click)="onTypeChange(option)">
+                                        <td>{{ option }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-container">
+                    <div class="input-field">
+                        <div class="title-field">
+                            <p class="title-input">Ngày hiệu lực</p>
+                        </div>
+                        <div class="text-field">
+                            <input type="date" name="search" class="search-bar" [(ngModel)]="searchParams.effectiveDate">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="22" height="25" viewBox="0 0 22 25" fill="none">
+                                <path d="M0 22.6562C0 23.9502 1.0498 25 2.34375 25H19.5312C20.8252 25 21.875 23.9502 21.875 22.6562V9.375H0V22.6562ZM15.625 13.0859C15.625 12.7637 15.8887 12.5 16.2109 12.5H18.1641C18.4863 12.5 18.75 12.7637 18.75 13.0859V15.0391C18.75 15.3613 18.4863 15.625 18.1641 15.625H16.2109C15.8887 15.625 15.625 15.3613 15.625 15.0391V13.0859ZM15.625 19.3359C15.625 19.0137 15.8887 18.75 16.2109 18.75H18.1641C18.4863 18.75 18.75 19.0137 18.75 19.3359V21.2891C18.75 21.6113 18.4863 21.875 18.1641 21.875H16.2109C15.8887 21.875 15.625 21.6113 15.625 21.2891V19.3359ZM9.375 13.0859C9.375 12.7637 9.63867 12.5 9.96094 12.5H11.9141C12.2363 12.5 12.5 12.7637 12.5 13.0859V15.0391C12.5 15.3613 12.2363 15.625 11.9141 15.625H9.96094C9.63867 15.625 9.375 15.3613 9.375 15.0391V13.0859ZM9.375 19.3359C9.375 19.0137 9.63867 18.75 9.96094 18.75H11.9141C12.2363 18.75 12.5 19.0137 12.5 19.3359V21.2891C12.5 21.6113 12.2363 21.875 11.9141 21.875H9.96094C9.63867 21.875 9.375 21.6113 9.375 21.2891V19.3359ZM3.125 13.0859C3.125 12.7637 3.38867 12.5 3.71094 12.5H5.66406C5.98633 12.5 6.25 12.7637 6.25 13.0859V15.0391C6.25 15.3613 5.98633 15.625 5.66406 15.625H3.71094C3.38867 15.625 3.125 15.3613 3.125 15.0391V13.0859ZM3.125 19.3359C3.125 19.0137 3.38867 18.75 3.71094 18.75H5.66406C5.98633 18.75 6.25 19.0137 6.25 19.3359V21.2891C6.25 21.6113 5.98633 21.875 5.66406 21.875H3.71094C3.38867 21.875 3.125 21.6113 3.125 21.2891V19.3359ZM19.5312 3.125H17.1875V0.78125C17.1875 0.351562 16.8359 0 16.4062 0H14.8438C14.4141 0 14.0625 0.351562 14.0625 0.78125V3.125H7.8125V0.78125C7.8125 0.351562 7.46094 0 7.03125 0H5.46875C5.03906 0 4.6875 0.351562 4.6875 0.78125V3.125H2.34375C1.0498 3.125 0 4.1748 0 5.46875V7.8125H21.875V5.46875C21.875 4.1748 20.8252 3.125 19.5312 3.125Z" fill="#AAAAAA"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <div class="title-field">
+                            <p class="title-input">Ngày hết hiệu lực</p>
+                        </div>
+                        <div class="text-field">
+                            <input type="date" name="search" class="search-bar" [(ngModel)]="searchParams.expirationDate">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="22" height="25" viewBox="0 0 22 25" fill="none">
+                                <path d="M0 22.6562C0 23.9502 1.0498 25 2.34375 25H19.5312C20.8252 25 21.875 23.9502 21.875 22.6562V9.375H0V22.6562ZM15.625 13.0859C15.625 12.7637 15.8887 12.5 16.2109 12.5H18.1641C18.4863 12.5 18.75 12.7637 18.75 13.0859V15.0391C18.75 15.3613 18.4863 15.625 18.1641 15.625H16.2109C15.8887 15.625 15.625 15.3613 15.625 15.0391V13.0859ZM15.625 19.3359C15.625 19.0137 15.8887 18.75 16.2109 18.75H18.1641C18.4863 18.75 18.75 19.0137 18.75 19.3359V21.2891C18.75 21.6113 18.4863 21.875 18.1641 21.875H16.2109C15.8887 21.875 15.625 21.6113 15.625 21.2891V19.3359ZM9.375 13.0859C9.375 12.7637 9.63867 12.5 9.96094 12.5H11.9141C12.2363 12.5 12.5 12.7637 12.5 13.0859V15.0391C12.5 15.3613 12.2363 15.625 11.9141 15.625H9.96094C9.63867 15.625 9.375 15.3613 9.375 15.0391V13.0859ZM9.375 19.3359C9.375 19.0137 9.63867 18.75 9.96094 18.75H11.9141C12.2363 18.75 12.5 19.0137 12.5 19.3359V21.2891C12.5 21.6113 12.2363 21.875 11.9141 21.875H9.96094C9.63867 21.875 9.375 21.6113 9.375 21.2891V19.3359ZM3.125 13.0859C3.125 12.7637 3.38867 12.5 3.71094 12.5H5.66406C5.98633 12.5 6.25 12.7637 6.25 13.0859V15.0391C6.25 15.3613 5.98633 15.625 5.66406 15.625H3.71094C3.38867 15.625 3.125 15.3613 3.125 15.0391V13.0859ZM3.125 19.3359C3.125 19.0137 3.38867 18.75 3.71094 18.75H5.66406C5.98633 18.75 6.25 19.0137 6.25 19.3359V21.2891C6.25 21.6113 5.98633 21.875 5.66406 21.875H3.71094C3.38867 21.875 3.125 21.6113 3.125 21.2891V19.3359ZM19.5312 3.125H17.1875V0.78125C17.1875 0.351562 16.8359 0 16.4062 0H14.8438C14.4141 0 14.0625 0.351562 14.0625 0.78125V3.125H7.8125V0.78125C7.8125 0.351562 7.46094 0 7.03125 0H5.46875C5.03906 0 4.6875 0.351562 4.6875 0.78125V3.125H2.34375C1.0498 3.125 0 4.1748 0 5.46875V7.8125H21.875V5.46875C21.875 4.1748 20.8252 3.125 19.5312 3.125Z" fill="#AAAAAA"/>
+                                </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden-container" *ngIf="advancedSearch" (click) ="advancedSearch = !advancedSearch">
+                <div class="hidden-icon" >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-hidden" fill="none">
+                        <path d="M1.54578 1.28003L4.82254 5.78003L8.0993 1.28003" stroke="#78829D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                    <p class="hidden">Ẩn tìm kiếm nâng cao</p>
+            </div>
+            <div class="hidden-container" *ngIf="!advancedSearch" (click) ="advancedSearch = !advancedSearch; refresh()">
+                <div class="show-icon" >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-hidden" fill="none">
+                        <path d="M1.54578 1.28003L4.82254 5.78003L8.0993 1.28003" stroke="#78829D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                    <p class="hidden">Tìm kiếm nâng cao</p>
+            </div>
+            
+        </div>
+        <div>
+            <form>
+                <div style="display: flex; align-items: center">
+                    <div style="margin-right: auto">
+                    </div>
+                    <div class="button-container" style="margin-top: 20px">
+                        <button
+                            type="submit"
+                            style="
+                                padding: 10px 30px;
+                                margin-right: 20px;
+                                background-color: #f70c47;
+                                color: white;
+                                font-size: 14px;
+                                border: none;
+                                cursor: pointer;
+                                transition: background-color 0.3s;
+                                border-radius: 5px;
+                            "
+                            onmouseover="this.style.backgroundColor='#ba0633'"
+                            onmouseout="this.style.backgroundColor='#f70c47'"
+                        >
+                            Xóa
+                        </button>
+                        <button
+                            type="submit"
+                            style="
+                                padding: 10px 20px;
+                                background-color: #07c938;
+                                color: white;
+                                font-size: 14px;
+                                border: none;
+                                cursor: pointer;
+                                transition: background-color 0.3s;
+                                border-radius: 5px;
+                            "
+                            onmouseover="this.style.backgroundColor='#06b131'"
+                            onmouseout="this.style.backgroundColor='#07c938'"
+                        >
+                            Tải xuống
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>    
+
+    <div [@routerTransition]>
+        <div class="content d-flex flex-column flex-column-fluid">
+            <sub-header [title]="'Documents' | localize">
+                <div role="actions">
+                    <button 
+                    *ngIf="'Pages.Administration.Users.Create' | permission"
+                    class="btn btn-primary"
+                    (click)="createDocument()"
+                    >
+                    
+                        <i class="fa fa-plus"></i>
+                        Thêm văn bản pháp lý
+                    </button>
+                </div>
+            </sub-header>
+
+        <div [class]="containerClass">
+            <div class="card card-custom gutter-b">
+                <div class="card-body">
+                    <h3>Danh sách văn bản pháp lý</h3>
+                    <div class="row align-items-center">
+                        <!--<Primeng-TurboTable-Start>-->
+                        <div class="primeng-datatable-container" [busyIf]="primengTableHelper.isLoading">
+                            <p-table
+                                [value]="documents"
+                                selectionMode="multiple"
+                                [paginator]="true"
+                                [rows]="20"
+                                [rowsPerPageOptions]="[10, 20, 50]"
+                                [showCurrentPageReport]="true"
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                [selectionPageOnly]="true"
+                                [scrollable] = "true"
+                                ScrollWidth="100%"
+                                scrollDirection="horizontal"
+                                [responsive]="primengTableHelper.isResponsive"
+                                [resizableColumns]="primengTableHelper.resizableColumns"
+                            >
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 3rem">
+                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                        </th>
+                                        <th style="width:100px">Hành động</th>
+                                        <th style="width:100px">Số hiệu</th>
+                                        <button type="button" class="btn" (click)="sortwithKey('code', 0)">
+                                            <i class="fas" [ngClass]="icons[counter[0]]"></i>
+                                         </button>
+                                      
+                                        <th style="width:100px">Tiêu đề</th>
+                                        <button type="button" class="btn" (click)="sortwithKey('title', 1)">
+                                            <i class="fas" [ngClass]="icons[counter[1]]"></i>
+                                        </button>
+                                      
+                                        <th style="width:200px">Trích yếu</th>
+                                        <th style="width:100px">Loại văn bản</th>
+                                        <button type="button" class="btn" (click)="sortwithKey('type', 2)">
+                                            <i class="fas" [ngClass]="icons[counter[2]]"></i>
+                                        </button> 
+                                      
+                                        <th style="width:100px">Ngày hiệu lực</th>
+                                        <button type="button" class="btn" (click)="sortwithKey('effectivedate', 3)">
+                                            <i class="fas" [ngClass]="icons[counter[3]]"></i>
+                                        </button>  
+                                      
+                                        <th style="width:100px">Ngày hết hiệu lực</th>
+                                        <button type="button" class="btn" (click)="sortwithKey('expirationdate', 4)">
+                                            <i class="fas" [ngClass]="icons[counter[4]]"></i>
+                                        </button>        
+                 
+                                        <th style="width:100px">Toàn văn</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-document>
+                                    <tr>
+                                        <td>
+                                            <p-tableCheckbox [value]="document"></p-tableCheckbox>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" dropdown placement="bottom left" container="body">
+                                                <button
+                                                    id="dropdownButton"
+                                                    type="button"
+                                                    class="btn btn-primary btn-sm dropdown-toggle"
+                                                    dropdownToggle
+                                                    aria-controls="dropdownMenu"
+                                                >
+                                                    <i class="fa fa-cog"></i>
+                                                    <span class="caret"></span>
+                                                    Hành động
+                                                </button>
+                                                <ul
+                                                    id="dropdownMenu"
+                                                    class="dropdown-menu"
+                                                    role="menu"
+                                                    *dropdownMenu
+                                                    aria-labelledby="dropdownButton"
+                                                >
+                                                    <li
+                                                        role="menuitem"
+                                                    >
+                                                        <a
+                                                            href="javascript:;"
+                                                            class="dropdown-item"
+                                                        >
+                                                            Xóa
+                                                        </a>
+                                                    </li>
+                                                    <li
+                                                        role="menuitem"
+                                                    >
+                                                        <a
+                                                            href="javascript:;"
+                                                            class="dropdown-item"
+                                                        >
+                                                            Chỉnh sửa
+                                                        </a>
+                                                    </li>
+                                                    <li
+                                                        role="menuitem"
+                                                    >
+                                                        <a
+                                                            href="javascript:;"
+                                                            class="dropdown-item"
+                                                            (click)="show()"
+                                                        >
+                                                            Xem
+                                                        </a>
+                                                    </li>
+                                                    <li
+                                                        role="menuitem"
+                                                    >
+                                                        <a
+                                                            href="javascript:;"
+                                                            class="dropdown-item"
+                                                        >
+                                                            Tải xuống
+                                                        </a>
+                                                    </li>
+                                                    <li
+                                                        role="menuitem"
+                                                    >
+                                                        <a
+                                                            href="javascript:;"
+                                                            class="dropdown-item"
+                                                        >
+                                                            Thay thế văn bản cũ
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>{{ document.code }}</td>
+                                        <td>{{ document.title.length > 20 ? document.title.substring(0, 20) + '...' : document.title }}</td>
+                                        <td>{{ document.citation }}</td>
+                                        <td>{{ document.type }}</td>
+                                        <td>{{ document.effectiveDate | date:'dd/MM/yyyy' }}</td>
+                                        <td>{{ document.expirationDate | date:'dd/MM/yyyy' }}</td>
+                                        <td style="cursor: pointer;" (click)="openPdfInNewTab(document.fileName)">{{ document.fileName }}</td>
+                                        <viewDocumentModal [document]="document"></viewDocumentModal>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>                      
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<app-create-document #createDocumentModal></app-create-document>

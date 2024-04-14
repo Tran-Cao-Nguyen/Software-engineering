@@ -95,8 +95,6 @@ import { NgxSpinnerModule, NgxSpinnerComponent } from 'ngx-spinner';
 import { ScrollTopComponent } from './shared/layout/scroll-top.component';
 import { AppBsModalModule } from '@shared/common/appBsModal/app-bs-modal.module';
 import { SubheaderModule } from './shared/common/sub-header/subheader.module';
-import { AdvancedSearchComponent } from './main/AdvancedSearchComponent/AdvancedSearchComponent.component';
-
 
 @NgModule({
     declarations: [
@@ -155,7 +153,7 @@ import { AdvancedSearchComponent } from './main/AdvancedSearchComponent/Advanced
         SessionTimeoutComponent,
         MenuSearchBarComponent,
         ActiveDelegatedUsersComboComponent,
-        DefaultLogoComponent,
+        DefaultLogoComponent
     ],
     imports: [
         CommonModule,

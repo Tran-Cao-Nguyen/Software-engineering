@@ -2824,7 +2824,56 @@ export class DocumentServiceProxy {
                 return <Observable<ListResultDtoOfDocumentListDto>><any>_observableThrow(response_);
         }));
     }
+    /**
+    * @param body (optional) 
+    * @return Success
+    */
+    createDocuments(body: CreateDocumentInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Document/CreateDocuments";
+        url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateDocuments(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateDocuments(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+            return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+    protected processCreateDocuments(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
     protected processGetDocuments(response: HttpResponseBase): Observable<ListResultDtoOfDocumentListDto> {
         const status = response.status;
         const responseBlob =
@@ -15851,6 +15900,10 @@ export class CreateFriendshipRequestByUserNameInput implements ICreateFriendship
     }
 }
 
+
+
+
+
 export interface ICreateFriendshipRequestByUserNameInput {
     tenancyName: string;
     userName: string | undefined;
@@ -16193,6 +16246,80 @@ export interface ICreatePaymentDto {
     recurringPaymentEnabled: boolean;
     successUrl: string | undefined;
     errorUrl: string | undefined;
+}
+
+
+
+export class CreateDocumentInput implements ICreateDocumentInput {
+    id!: number;
+    title!: string;
+    code!: string;
+    releaseDate!: DateTime;
+    organization!: string;
+    effectiveDate!: DateTime;
+    expirationDate!: DateTime;
+    type!:string;
+    fileName!:string;
+    citation!: string;
+
+    constructor(data?: ICreateDocumentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.code = _data["code"];
+            this.releaseDate = _data["releaseDate"];
+            this.organization = _data["organization"];
+            this.effectiveDate = _data["effectiveDate"];
+            this.expirationDate = _data["expirationDate"];
+            this.type = _data["type"];
+            this.fileName = _data["filename"];
+            this.citation = _data["citation"];
+        }
+    }
+
+    static fromJS(data: any): CreateDocumentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateDocumentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["code"] = this.code;
+        data["releaseDate"] = this.releaseDate;
+        data["organization"] = this.organization;
+        data["effectiveDate"] = this.effectiveDate;
+        data["expirationDate"] = this.expirationDate;
+        data["type"] = this.type;
+        data["filename"] = this.fileName;
+        data["citation"] = this.citation;
+        return data; 
+    }
+}
+
+export interface ICreateDocumentInput{
+    id : number;
+    title: string;
+    code: string;
+    releaseDate: DateTime;
+    organization: string;
+    effectiveDate: DateTime;
+    expirationDate: DateTime;
+    type: string;
+    fileName: string;
+    citation: string;
 }
 
 export class CreateTenantInput implements ICreateTenantInput {
@@ -16552,6 +16679,7 @@ export interface IDelegatedImpersonateInput {
 }
 
 export class DocumentListDto implements IDocumentListDto {
+    id!: number;
     title!: string | undefined;
     code!: string | undefined;
     releaseDate!: DateTime;
@@ -16559,6 +16687,8 @@ export class DocumentListDto implements IDocumentListDto {
     effectiveDate!: DateTime;
     expirationDate!: DateTime;
     type!: string | undefined;
+    fileName!: string | undefined;
+    citation!: string | undefined;
 
     constructor(data?: IDocumentListDto) {
         if (data) {
@@ -16571,6 +16701,7 @@ export class DocumentListDto implements IDocumentListDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.title = _data["title"];
             this.code = _data["code"];
             this.releaseDate = _data["releaseDate"] ? DateTime.fromISO(_data["releaseDate"].toString()) : <any>undefined;
@@ -16578,6 +16709,8 @@ export class DocumentListDto implements IDocumentListDto {
             this.effectiveDate = _data["effectiveDate"] ? DateTime.fromISO(_data["effectiveDate"].toString()) : <any>undefined;
             this.expirationDate = _data["expirationDate"] ? DateTime.fromISO(_data["expirationDate"].toString()) : <any>undefined;
             this.type = _data["type"];
+            this.fileName = _data["fileName"];
+            this.citation = _data["citation"];
         }
     }
 
@@ -16590,6 +16723,7 @@ export class DocumentListDto implements IDocumentListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["title"] = this.title;
         data["code"] = this.code;
         data["releaseDate"] = this.releaseDate ? this.releaseDate.toString() : <any>undefined;
@@ -16597,11 +16731,14 @@ export class DocumentListDto implements IDocumentListDto {
         data["effectiveDate"] = this.effectiveDate ? this.effectiveDate.toString() : <any>undefined;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toString() : <any>undefined;
         data["type"] = this.type;
+        data["fileName"] = this.fileName;
+        data["citation"] = this.citation;
         return data; 
     }
 }
 
 export interface IDocumentListDto {
+    id: number;
     title: string | undefined;
     code: string | undefined;
     releaseDate: DateTime;
@@ -16609,6 +16746,8 @@ export interface IDocumentListDto {
     effectiveDate: DateTime;
     expirationDate: DateTime;
     type: string | undefined;
+    fileName: string | undefined;
+    citation: string | undefined;
 }
 
 export class DynamicEntityPropertyDto implements IDynamicEntityPropertyDto {
