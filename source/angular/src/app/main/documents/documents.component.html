@@ -119,11 +119,11 @@
                             <p class="title-input">Trích yếu</p>
                         </div>
                         <div class="text-field">
-                            <input type="text" name="search" class="search-bar" [value]="searchParams.organization ?? ''" (input)="onOrganizationChange($event.target.value); showOrganizationOptions = true; fetchOrganization()" (blur)="onBlurOrganization()">
-                            <div class="options-list" *ngIf="showOrganizationOptions">
+                            <input type="text" name="search" class="search-bar" [value]="searchParams.citation ?? ''" (input)="onCitationChange($event.target.value); showCitationOptions = true; fetchCitation()" (blur)="onBlurCitation()">
+                            <div class="options-list" *ngIf="showCitationOptions">
                                 <table>
-                                    <tr *ngFor="let option of organizationOptions" (click)="onOrganizationChange(option); showOrganizationOptions = false">
-                                        <td>{{ option }}</td>
+                                    <tr *ngFor="let citation of citationOptions" (click)="onCitationChange(citation); showCitationOptions = false">
+                                        <td>{{ citation }}</td>
                                     </tr>
                                 </table>
                             </div>

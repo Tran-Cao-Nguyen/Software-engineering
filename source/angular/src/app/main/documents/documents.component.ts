@@ -30,9 +30,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     // Type Search
     typeOptions: string[] = [];
     showTypeOptions: boolean = false;
-    // Organization Search
-    organizationOptions: string[] = [];
-    showOrganizationOptions: boolean = false;
+    // Citation Search
+    citationOptions: string[] = [];
+    showCitationOptions: boolean = false;
     // Title Search
     titleOptions: string[] = [];
     showTitleOptions: boolean = false;
@@ -166,7 +166,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     
     fetchTypeOption(): void {
         this.showTypeOptions = true;
-        this.typeOptions = [...new Set(this.documents.map(obj => obj.type))];
+        this.typeOptions = [...new Set(this.documents.map(obj => obj.type))].slice(0, 5);
     }
 
     toggleFocus(): void {
@@ -185,9 +185,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         }, 100); 
     }
 
-    onBlurOrganization(): void {
+    onBlurCitation(): void {
         setTimeout(() => {
-          if (this.showOrganizationOptions) this.showOrganizationOptions = false;
+          if (this.showCitationOptions) this.showCitationOptions = false;
         }, 100); 
     }
 
@@ -208,11 +208,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         this.showTypeOptions = false;
     }
     
-    fetchOrganization(): void {
-        if (this.searchParams.organization === '') this.showOrganizationOptions = false;
-        if (this.showOrganizationOptions) {
-            const wordSearch = this.searchParams.organization.trim().toLowerCase().split(' ').filter(word => word !== '');
-            this.organizationOptions = [...new Set(this.documents.map(obj => obj.organization))].filter(suggestion => {
+    fetchCitation(): void {
+        if (this.searchParams.citation === '') this.showCitationOptions = false;
+        if (this.showCitationOptions) {
+            const wordSearch = this.searchParams.citation.trim().toLowerCase().split(' ').filter(word => word !== '');
+            this.citationOptions = [...new Set(this.documents.map(obj => obj.citation))].filter(suggestion => {
                 const words = suggestion.toLowerCase().split(' ');
                 if (wordSearch.length <= words.length) {
                     for (let x in wordSearch) {
@@ -225,8 +225,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    onOrganizationChange(value: string): void {
-        this.searchParams.organization = value;
+    onCitationChange(value: string): void {
+        this.searchParams.citation = value;
     }
 
     fetchTitle(): void {
