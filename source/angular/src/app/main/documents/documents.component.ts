@@ -227,7 +227,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                     return true;
                 }
                 return false
-            }).slice(0, 5);;
+            }).slice(0, 5);
         }
     }
 
@@ -248,7 +248,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                     return true;
                 }
                 return false
-            }).slice(0, 5);;
+            }).slice(0, 5);
         }
     }
 
@@ -263,7 +263,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
             this.codeOptions = [...new Set(this.results.map(obj => obj.code))].filter(suggestion => {
                 if (suggestion.startsWith(wordSearch)) return true;
                 return false;
-            }).slice(0, 5);;
+            }).slice(0, 5);
         }
     }
 
