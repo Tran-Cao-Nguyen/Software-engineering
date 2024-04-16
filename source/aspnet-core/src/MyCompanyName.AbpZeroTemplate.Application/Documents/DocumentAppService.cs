@@ -53,7 +53,7 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
                 Code = input.Code,
                 Citation = input.Citation,
                 Organization = "HCMUT", // dont have field organization
-                FileName = "123.txt",  // Group 10 code field FileName 
+                FileName = input.FileName,  // Group 10 code field FileName 
             });
             await CurrentUnitOfWork.SaveChangesAsync();
         }

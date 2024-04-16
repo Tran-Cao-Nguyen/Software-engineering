@@ -9,13 +9,16 @@ import { InputTextModule } from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import { LoaiVanBanComponent } from './loai-van-ban/loai-van-ban.component';
 import { CreateDocumentComponent } from './create-document/create-document.component';
+import { UploadFileComponent } from './upload-file/upload-file.component';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
-    declarations: [DocumentsComponent, ViewDocumentModalComponent, LoaiVanBanComponent, CreateDocumentComponent],
+    declarations: [DocumentsComponent, ViewDocumentModalComponent, LoaiVanBanComponent, CreateDocumentComponent, UploadFileComponent],
     imports: [AppSharedModule, DocumentsRoutingModule, SubheaderModule,
         InputTextModule,
         AutoCompleteModule,
-        ButtonModule
+        ButtonModule,
+        FileUploadModule
 ]
 
 })

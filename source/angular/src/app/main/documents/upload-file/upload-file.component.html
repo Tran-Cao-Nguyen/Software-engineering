@@ -1,0 +1,37 @@
+<div class="card card-custom -b">
+    <div class="card-body">
+        <label class="form-label" for="DefaultFileUploadFileInput">Toàn văn (doc, docx, pdf) *</label>
+        <p-fileUpload #fileUploader name="myfile[]" method="post" id="DefaultFileUploadFileInput" chooseLabel="Thêm"
+            chooseIcon="pi pi-upload" [showUploadButton]="false" cancelLabel="Hủy" accept=".pdf, .docx, .doc"
+            maxFileSize="100000000" (onRemove)="onRemove($event)" (onSelect)="onSelect($event)"
+            (onClear)="onClear($event)">
+
+            <ng-template let-file pTemplate="file">
+                <!-- <ng-template *ngFor="let file of array" pTemplate="file"> -->
+                <div class="container">
+                    <div class="Fileicon">
+                        <ng-container *ngIf="getIcon(file) == 'far fa-file-pdf'; else elseBlock">
+                            <span class="{{getIcon(file)}}" style="color:red"></span>
+                        </ng-container>
+                        <ng-template #elseBlock>
+                            <span class="{{getIcon(file)}}" style="color:blue"></span>
+                        </ng-template>
+                    </div>
+
+                    <div class="Filename">{{file.name}}</div>
+                    <div class="Filesize">{{getSize(file.size)}}</div>
+
+                    <!-- div for button remove -->
+                    <div style="flex: 1; min-width: auto; text-align: right;">
+                        <button pButton type="button" icon="pi pi-times"
+                            class="p-element p-button p-component p-button-icon-only" ng-reflect-icon="pi pi-times"
+                            (click)="fileUploader.remove($event ,fileUploader.files.indexOf(file))">
+                        </button>
+                    </div>
+                    <!-- end button remove here -->
+                </div>
+            </ng-template>
+        </p-fileUpload>
+        <!-- <button type="button" (click)="present()">click Me</button> -->
+    </div>
+</div>

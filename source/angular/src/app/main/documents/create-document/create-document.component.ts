@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { LoaiVanBanComponent } from '../loai-van-ban/loai-van-ban.component';
 import Swal from 'sweetalert2'
 import { CreateDocumentInput } from '../createDocInput/ceateDocumentInput';
+import { UploadFileComponent } from '../upload-file/upload-file.component';
 
 @Component({
   selector: 'app-create-document',
@@ -20,6 +21,7 @@ export class CreateDocumentComponent extends AppComponentBase {
     @ViewChild('createModal', { static: true }) modal: ModalDirective;
     @ViewChild(LoaiVanBanComponent) loaivanban : LoaiVanBanComponent;
     @ViewChild('EffectDayInput') effectDayInput: ElementRef;
+    @ViewChild('uploadFileComponent') uploadfile: UploadFileComponent;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
@@ -88,6 +90,9 @@ export class CreateDocumentComponent extends AppComponentBase {
     save(): void {
         this.saving = true;
         this.legaldoc.type = this.loaivanban.InputLoaiVanBan;
+        this.legaldoc.fileName = this.uploadfile.uploader.queue[0].file.name;
+        this.uploadfile.upload();
+
         this._documentService
             .createDocuments(this.legaldoc)
             .pipe(finalize(() => (this.saving = false)))
