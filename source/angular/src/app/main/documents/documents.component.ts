@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DocumentServiceProxy, DocumentListDto, ListResultDtoOfDocumentListDto } from '@shared/service-proxies/service-proxies';
@@ -6,6 +6,8 @@ import { ViewDocumentModalComponent } from './view-document-modal.component';
 
 import { CreateDocumentComponent } from './create-document/create-document.component';
 import { document } from 'ngx-bootstrap/utils';
+import { HttpEventType } from '@angular/common/http';
+import { DownloadFileService } from './download-file/download-file';
 @Component({
     templateUrl: './documents.component.html',
     animations: [appModuleAnimation()],
@@ -42,7 +44,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _DocumentService: DocumentServiceProxy
+        private _DocumentService: DocumentServiceProxy,
+        private _DownloadFileService: DownloadFileService
     ) {
         super(injector);
     }
@@ -265,7 +268,30 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         this.searchParams.code = value;
     }
 
+    // Download
 
+    public progress: number;
+    
+    download = (fileName) => {
+        this._DownloadFileService.downloadFile(fileName).subscribe((event) => {
+            if (event.type === HttpEventType.UploadProgress)
+                this.progress = Math.round((100 * event.loaded) / event.total);
+
+            else if (event.type === HttpEventType.Response) {
+                const downloadFile = new Blob([event.body], { type: event.body.type });
+                const a = document.createElement('a');
+                a.setAttribute('style', 'display:none;');
+                document.body.appendChild(a);
+                a.download = fileName;
+                a.href = URL.createObjectURL(downloadFile);
+                a.target = '_blank';
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+    }
+
+    // End Download    
 
 }
 

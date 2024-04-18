@@ -74,8 +74,9 @@ import { NotificationsComponent } from './shared/layout/notifications/notificati
 import { TextMaskModule } from 'angular2-text-mask';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ActiveDelegatedUsersComboComponent } from './shared/layout/topbar/active-delegated-users-combo.component';
-
+import { FileUploadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DefaultLogoComponent } from './shared/layout/themes/default/default-logo.component';
+import { DownloadFileService } from './main/documents/download-file/download-file';
 
 // Metronic
 import {
@@ -192,6 +193,9 @@ import { SubheaderModule } from './shared/common/sub-header/subheader.module';
             provide: PERFECT_SCROLLBAR_CONFIG,
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG,
         },
+        FileUploadServiceProxy,
+        DownloadFileService
+
     ]
 })
 export class AppModule {}

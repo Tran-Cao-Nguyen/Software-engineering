@@ -229,6 +229,7 @@
                             "
                             onmouseover="this.style.backgroundColor='#06b131'"
                             onmouseout="this.style.backgroundColor='#07c938'"
+                            
                         >
                             Tải xuống
                         </button>
@@ -373,6 +374,7 @@
                                                         <a
                                                             href="javascript:;"
                                                             class="dropdown-item"
+                                                            (click)="download(document.fileName)"
                                                         >
                                                             Tải xuống
                                                         </a>
