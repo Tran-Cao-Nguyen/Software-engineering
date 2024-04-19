@@ -85,17 +85,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     }
 
     sortFn(prop: any, asc: any) {
-        this.documents = this.documentsWithoutFilter.sort(function (a: any, b: any) {
+        this.documents = this.documents.sort(function (a: any, b: any) {
             if (asc) {
                 return (a[prop] > b[prop]) ? 1 : ((a[prop] < b[prop]) ? -1 : 0);
             }
             return (b[prop] > a[prop]) ? 1 : ((b[prop] < a[prop]) ? -1 : 0);
         });
     }
-    counter: number[] = [0, 0, 0, 0, 0, 0];
+    counter: number[] = [0, 0, 0, 0, 0];
     icons: string[] = ['fa-sort', 'fa-sort-down', 'fa-sort-up'];
     sortwithKey(prop: any, index: number) {
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 5; i++) {
             if (i == index) this.counter[i]++;
             else this.counter[i] = 0;
         }
@@ -108,6 +108,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                 this.sortFn(prop, true);
                 break;
             default:
+                this.sortFn("code", true);
                 break;
         }
     }
