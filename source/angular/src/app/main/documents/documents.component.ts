@@ -172,7 +172,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     
     fetchTypeOption(): void {
         this.showTypeOptions = true;
-        this.typeOptions = [...new Set(this.results.map(obj => obj.type))].slice(0, 5);
+        this.typeOptions = [...new Set(this.results.map(obj => obj.type))];
     }
 
     toggleFocus(): void {
@@ -226,7 +226,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                     }
                     return true;
                 }
-                return false
+                return false;
             }).slice(0, 5);
         }
     }
@@ -247,7 +247,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                     }
                     return true;
                 }
-                return false
+                return false;
             }).slice(0, 5);
         }
     }
