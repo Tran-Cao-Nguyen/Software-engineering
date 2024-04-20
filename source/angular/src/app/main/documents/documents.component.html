@@ -229,7 +229,7 @@
                             "
                             onmouseover="this.style.backgroundColor='#06b131'"
                             onmouseout="this.style.backgroundColor='#07c938'"
-                            
+                            (click)="downloadAll()"
                         >
                             Tải xuống
                         </button>
@@ -263,7 +263,7 @@
                         <!--<Primeng-TurboTable-Start>-->
                         <div class="primeng-datatable-container" [busyIf]="primengTableHelper.isLoading">
                             <p-table
-                                [value]="documents"
+                                [value]="documentNew"
                                 selectionMode="multiple"
                                 [paginator]="true"
                                 [rows]="20"
@@ -315,7 +315,10 @@
                                 <ng-template pTemplate="body" let-document>
                                     <tr>
                                         <td>
-                                            <p-tableCheckbox [value]="document"></p-tableCheckbox>
+                                            <p-tableCheckbox 
+                                                [value]="document"
+                                                (click)="onChange(document.id, document.isChecked)"   
+                                            ></p-tableCheckbox>
                                         </td>
                                         <td>
                                             <div class="btn-group" dropdown placement="bottom left" container="body">

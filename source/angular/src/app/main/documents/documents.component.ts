@@ -8,6 +8,7 @@ import { CreateDocumentComponent } from './create-document/create-document.compo
 import { document } from 'ngx-bootstrap/utils';
 import { HttpEventType } from '@angular/common/http';
 import { DownloadFileService } from './download-file/download-file';
+
 @Component({
     templateUrl: './documents.component.html',
     animations: [appModuleAnimation()],
@@ -23,6 +24,12 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     documentsWithoutFilter: any = [];
     suggestDocuments: DocumentListDto[];
     selectedDocuments: any;
+
+    
+
+    // Handle Multi Checkbox
+    documentNew: any[] = []
+    // End Handle Multi Checkbox
 
     // Advanced Search
     // General
@@ -45,7 +52,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _DocumentService: DocumentServiceProxy,
-        private _DownloadFileService: DownloadFileService
+        private _DownloadFileService: DownloadFileService,
     ) {
         super(injector);
     }
@@ -77,6 +84,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     getDocuments(): void {
         this._DocumentService.getDocuments(this.filter).subscribe((result) => {
             this.documents = result.items;
+
+            // Create New Array Document To Handle Multi Checkbox
+            this.documentNew = this.documents.map(
+                document => {
+                    return { ...document, isChecked: false}
+                }
+            )
+            // End Create New Array Document To Handle Multi Checkbox
+            
             this.documentsWithoutFilter = result.items;
         });
     }
@@ -292,6 +308,25 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     }
 
     // End Download    
+
+    // Handle Multi Checkbox
+    downloadAll(): void {
+        this.documentNew.filter(document => document.isChecked).forEach(document => {
+            this.download(document.fileName)
+        });
+    }
+
+    onChange(id: number, isChecked: boolean): void
+    {   
+        isChecked = !isChecked;
+        this.documentNew.forEach(document => {
+            if (document.id === id) {
+                document.isChecked = isChecked;
+            }
+        })
+        console.log(this.documentNew)
+    }
+    // End Handle Multi Checkbox
 
 }
 

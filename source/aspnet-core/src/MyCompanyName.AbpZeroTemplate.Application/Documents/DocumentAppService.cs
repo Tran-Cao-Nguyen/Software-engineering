@@ -45,41 +45,6 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
 
             return new ListResultDto<DocumentListDto>(ObjectMapper.Map<List<DocumentListDto>>(documents));
         }
-<<<<<<< HEAD
-
-
-        // Download
-        public FileDto GetDocumentDownload(GetDocumentDownload input)
-        {
-
-            var document = _DocumentRepository.Get(input.Id);
-
-            if (document != null)
-            {
-                string extension = Path.GetExtension(document.FileName);
-                extension = extension.TrimStart('.');
-
-                if (extension == "pdf")
-                {
-                    return new FileDto
-                    {
-                        FileName = document.FileName,
-                        FileType = MimeTypeNames.ApplicationPdf,
-                    };
-
-                }
-                else
-                {
-                    return new FileDto
-                    {
-                        FileName = document.FileName,
-                        FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument,
-                    };
-                }
-
-            }
-            return new FileDto();
-=======
         public async Task CreateDocuments(DocumentListDto input)
         {
             await _DocumentRepository.InsertAsync(new Document
@@ -95,7 +60,7 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
                 FileName = input.FileName,  // Group 10 code field FileName 
             });
             await CurrentUnitOfWork.SaveChangesAsync();
->>>>>>> origin
+
         }
     }
 }

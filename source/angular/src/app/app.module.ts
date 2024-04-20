@@ -77,6 +77,7 @@ import { ActiveDelegatedUsersComboComponent } from './shared/layout/topbar/activ
 import { FileUploadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DefaultLogoComponent } from './shared/layout/themes/default/default-logo.component';
 import { DownloadFileService } from './main/documents/download-file/download-file';
+import { ReactiveFormsModule} from '@angular/forms';
 
 // Metronic
 import {
@@ -183,6 +184,7 @@ import { SubheaderModule } from './shared/common/sub-header/subheader.module';
         NgxSpinnerModule,
         AppBsModalModule,
         SubheaderModule,
+        ReactiveFormsModule
     ],
     providers: [
         ImpersonationService,
