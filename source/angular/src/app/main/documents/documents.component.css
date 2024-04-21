@@ -52,19 +52,6 @@
     justify-content: flex-end;
 }
 
-.AdvancedSearch .title-input {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    letter-spacing: 0em;
-    text-align: left;
-    width: 60.12px;
-    height: 21px;
-    text-emphasis-color: #252F4A;
-    font-style: normal;
-}
-
-
 
 .AdvancedSearch .input-field {
     display: flex;
@@ -88,7 +75,7 @@
 
 
 .AdvancedSearch .search-bar {
-    width: 516px;
+    width: 666px;
     height: 41.56px;
     flex-shrink: 0;
     border-radius: 8px;
@@ -181,7 +168,7 @@
 }
   
 .AdvancedSearch .options-list table {
-    width: 516px;
+    width: 666px;
     border-collapse: collapse;
   }
   
