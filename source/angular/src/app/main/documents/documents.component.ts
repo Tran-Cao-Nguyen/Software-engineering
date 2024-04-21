@@ -78,8 +78,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
             this.documentsWithoutFilter = result.items;
         });
     }
-    show(){
-        this.viewDocumentModal.show();
+    show(document: DocumentListDto){
+        this.viewDocumentModal.show(document);
     }
     openPdfInNewTab(fileName: string){
         this.viewDocumentModal.openPdfInNewTab(fileName);

@@ -91,10 +91,10 @@
                           <label for="effectivedate">{{ 'Effective date' | localize }} *</label>
                           <input
                               id="effectivedate"
+                              type="text"
                               name="effectivedate"
-                              #effectday="ngModel"
                               class="form-control"
-                              [(ngModel)]="document.effectiveDate"
+                              [value]="document.effectiveDate.toJSDate() | date:'dd/MM/yyyy'"
                               readonly
                           />
                       </div>
@@ -103,10 +103,9 @@
                           <input
                               id="expirationdate"
                               type="text"
-                              #expirationdate="ngModel"
                               name="expirationdate"
                               class="form-control"
-                              [(ngModel)]="document.expirationDate"
+                              [value]="document.expirationDate.toJSDate() | date:'dd/MM/yyyy'"
                               readonly
                           />
                       </div>   
