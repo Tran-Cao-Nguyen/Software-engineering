@@ -33,6 +33,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
 
     // Advanced Search
     // General
+    results: DocumentListDto[] = [];
     searchParams: any = {};
     noResultsFound: boolean = false;
     advancedSearch: boolean = false;
@@ -96,25 +97,25 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
             this.documentsWithoutFilter = result.items;
         });
     }
-    show(){
-        this.viewDocumentModal.show();
+    show(document: DocumentListDto){
+        this.viewDocumentModal.show(document);
     }
     openPdfInNewTab(fileName: string){
         this.viewDocumentModal.openPdfInNewTab(fileName);
     }
 
     sortFn(prop: any, asc: any) {
-        this.documents = this.documentsWithoutFilter.sort(function (a: any, b: any) {
+        this.documents = this.documents.sort(function (a: any, b: any) {
             if (asc) {
                 return (a[prop] > b[prop]) ? 1 : ((a[prop] < b[prop]) ? -1 : 0);
             }
             return (b[prop] > a[prop]) ? 1 : ((b[prop] < a[prop]) ? -1 : 0);
         });
     }
-    counter: number[] = [0, 0, 0, 0, 0, 0];
+    counter: number[] = [0, 0, 0, 0, 0];
     icons: string[] = ['fa-sort', 'fa-sort-down', 'fa-sort-up'];
     sortwithKey(prop: any, index: number) {
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 5; i++) {
             if (i == index) this.counter[i]++;
             else this.counter[i] = 0;
         }
@@ -127,6 +128,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                 this.sortFn(prop, true);
                 break;
             default:
+                this.sortFn("code", true);
                 break;
         }
     }
@@ -155,9 +157,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
 
         if (!Object.keys(this.searchParams).length) {
             this.noResultsFound = false;
+            this.documents = this.results;
             return;
         }
-        this.documents = this.documents.filter( document => {
+
+        this.documents = this.results.filter( document => {
             for (let key in this.searchParams) {
                 if (document[key] !== this.searchParams[key]) {
                     if (key === 'effectiveDate' && document.effectiveDate.toSQLDate() !== this.searchParams[key]) {
@@ -172,20 +176,23 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
             return true;
         })
 
+
         this.noResultsFound = this.documents.length === 0;
     }
 
     refresh(): void {
+        this.filter = '';
+        this.getDocuments();
+        this.results = this.documents;
         for (let key in this.searchParams) {
                 delete this.searchParams[key];
             }
-        this.getDocuments();
         this.selectedDocuments = '';
     }
     
     fetchTypeOption(): void {
         this.showTypeOptions = true;
-        this.typeOptions = [...new Set(this.documents.map(obj => obj.type))].slice(0, 5);
+        this.typeOptions = [...new Set(this.results.map(obj => obj.type))];
     }
 
     toggleFocus(): void {
@@ -231,7 +238,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         if (this.searchParams.citation === '') this.showCitationOptions = false;
         if (this.showCitationOptions) {
             const wordSearch = this.searchParams.citation.trim().toLowerCase().split(' ').filter(word => word !== '');
-            this.citationOptions = [...new Set(this.documents.map(obj => obj.citation))].filter(suggestion => {
+            this.citationOptions = [...new Set(this.results.map(obj => obj.citation))].filter(suggestion => {
                 const words = suggestion.toLowerCase().split(' ');
                 if (wordSearch.length <= words.length) {
                     for (let x in wordSearch) {
@@ -239,8 +246,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                     }
                     return true;
                 }
-                return false
-            }).slice(0, 5);;
+                return false;
+            }).slice(0, 5);
         }
     }
 
@@ -252,7 +259,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         if (this.searchParams.title === '') this.showTitleOptions = false;
         if (this.showTitleOptions) {
             const wordSearch = this.searchParams.title.trim().toLowerCase().split(' ').filter(word => word !== '');
-            this.titleOptions = [...new Set(this.documents.map(obj => obj.title))].filter(suggestion => {
+            this.titleOptions = [...new Set(this.results.map(obj => obj.title))].filter(suggestion => {
                 const words = suggestion.toLowerCase().split(' ');
                 if (wordSearch.length <= words.length) {
                     for (let x in wordSearch) {
@@ -260,8 +267,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
                     }
                     return true;
                 }
-                return false
-            }).slice(0, 5);;
+                return false;
+            }).slice(0, 5);
         }
     }
 
@@ -273,10 +280,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         if (this.searchParams.code === '') this.showCodeOptions = false;
         if (this.showCodeOptions) {
             const wordSearch = this.searchParams.code.trim().toLowerCase();
-            this.codeOptions = [...new Set(this.documents.map(obj => obj.code))].filter(suggestion => {
+            this.codeOptions = [...new Set(this.results.map(obj => obj.code))].filter(suggestion => {
                 if (suggestion.startsWith(wordSearch)) return true;
                 return false;
-            }).slice(0, 5);;
+            }).slice(0, 5);
         }
     }
 

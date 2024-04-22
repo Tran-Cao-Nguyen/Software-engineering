@@ -25,7 +25,8 @@ export class ViewDocumentModalComponent extends AppComponentBase {
         super(injector);
     }
 
-    show(): void {
+    show(doc: DocumentListDto): void {
+        this.document = doc;
         this.active = true;
         this.modal.show();
     }
