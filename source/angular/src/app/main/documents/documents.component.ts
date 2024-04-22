@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DocumentServiceProxy, DocumentListDto, ListResultDtoOfDocumentListDto } from '@shared/service-proxies/service-proxies';
@@ -8,6 +8,7 @@ import { CreateDocumentComponent } from './create-document/create-document.compo
 import { document } from 'ngx-bootstrap/utils';
 import { HttpEventType } from '@angular/common/http';
 import { DownloadFileService } from './download-file/download-file';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -19,21 +20,20 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     private viewDocumentModal !: ViewDocumentModalComponent;
     @ViewChild('createDocumentModal', { static: false }) createDocumentModal: CreateDocumentComponent;
 
-    documents: DocumentListDto[] = [];
+    documents: any[] = [];
     filter: string = '';
     documentsWithoutFilter: any = [];
-    suggestDocuments: DocumentListDto[];
+    suggestDocuments: any[];
     selectedDocuments: any;
 
     
-
-    // Handle Multi Checkbox
-    documentNew: any[] = []
-    // End Handle Multi Checkbox
+    // Handle Confirm Box
+    modalRef: BsModalRef;   
+    // End Handle Confirm Box
 
     // Advanced Search
     // General
-    results: DocumentListDto[] = [];
+    results: any[] = [];
     searchParams: any = {};
     noResultsFound: boolean = false;
     advancedSearch: boolean = false;
@@ -54,6 +54,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _DocumentService: DocumentServiceProxy,
         private _DownloadFileService: DownloadFileService,
+        private _ModalService: BsModalService,
     ) {
         super(injector);
     }
@@ -70,7 +71,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     onSearchSubmit(event): void {
         const filter = event
         this._DocumentService.getDocuments(filter).subscribe((result) => {
-            this.documents = result.items;
+            this.documents = result.items.map(
+                document => {
+                    return { ...document, isChecked: false}
+                }
+            )
         });
       }
 
@@ -78,26 +83,26 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         console.log(this.selectedDocuments)
         const filter = typeof this.selectedDocuments == 'string' ? this.selectedDocuments : this.selectedDocuments?.title
         this._DocumentService.getDocuments(filter).subscribe((result) => {
-            this.documents = result.items;
+            this.documents = result.items.map(
+                document => {
+                    return { ...document, isChecked: false}
+                }
+            )  
         });
     }
 
     getDocuments(): void {
         this._DocumentService.getDocuments(this.filter).subscribe((result) => {
-            this.documents = result.items;
-
-            // Create New Array Document To Handle Multi Checkbox
-            this.documentNew = this.documents.map(
+            this.documents = result.items.map(
                 document => {
                     return { ...document, isChecked: false}
                 }
             )
-            // End Create New Array Document To Handle Multi Checkbox
             
-            this.documentsWithoutFilter = result.items;
+            this.documentsWithoutFilter = this.documents;
         });
     }
-    show(document: DocumentListDto){
+    show(document: any){
         this.viewDocumentModal.show(document);
     }
     openPdfInNewTab(fileName: string){
@@ -318,7 +323,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
 
     // Handle Multi Checkbox
     downloadAll(): void {
-        this.documentNew.filter(document => document.isChecked).forEach(document => {
+        this.documents.filter(document => document.isChecked).forEach(document => {
             this.download(document.fileName)
         });
     }
@@ -326,14 +331,31 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     onChange(id: number, isChecked: boolean): void
     {   
         isChecked = !isChecked;
-        this.documentNew.forEach(document => {
+        this.documents.forEach(document => {
             if (document.id === id) {
                 document.isChecked = isChecked;
             }
         })
-        console.log(this.documentNew)
+    }
+    onChangeAll(): void {
+        // Not Handle 
     }
     // End Handle Multi Checkbox
+
+    // Handle Confirm Box
+    openModal(template: TemplateRef<any>) {
+        this.modalRef = this._ModalService.show(template, {class: 'modal-sm'});
+    }
+
+    confirm(): void {     
+        this.modalRef.hide();
+        this.downloadAll();
+    }
+
+    decline(): void {
+        this.modalRef.hide();
+    }
+    // End Handle Confirm Box
 
 }
 

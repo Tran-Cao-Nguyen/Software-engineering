@@ -229,10 +229,20 @@
                             "
                             onmouseover="this.style.backgroundColor='#06b131'"
                             onmouseout="this.style.backgroundColor='#07c938'"
-                            (click)="downloadAll()"
+                            (click)="openModal(template)"
                         >
                             Tải xuống
                         </button>
+                        <ng-template #template>
+                            <div class="modal-body text-center">
+                                <p class="confirmation-text">Bạn có chắc không?</p>
+                                <p class="instruction">Toàn văn của văn bản bạn chọn sẽ được tải xuống</p>
+                                <div>
+                                    <button type="button" class="btn btn-default" (click)="decline()" >Huỷ</button>
+                                    <button type="button" class="btn btn-primary" (click)="confirm()" >Đồng ý</button>
+                                </div>
+                            </div>        
+                        </ng-template>
                     </div>
                 </div>
             </form>
@@ -263,7 +273,7 @@
                         <!--<Primeng-TurboTable-Start>-->
                         <div class="primeng-datatable-container" [busyIf]="primengTableHelper.isLoading">
                             <p-table
-                                [value]="documentNew"
+                                [value]="documents"
                                 selectionMode="multiple"
                                 [paginator]="true"
                                 [rows]="20"

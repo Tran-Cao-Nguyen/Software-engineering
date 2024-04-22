@@ -184,3 +184,12 @@
 .AdvancedSearch .icon:hover {
     cursor: pointer;
   }
+
+.confirmation-text {
+font-size: 20px; /* Adjust the font size as desired */
+font-weight: bold;
+}
+
+.instruction {
+    font-size: 15px;
+}
