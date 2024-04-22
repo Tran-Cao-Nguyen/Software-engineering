@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DocumentServiceProxy, DocumentListDto, ListResultDtoOfDocumentListDto } from '@shared/service-proxies/service-proxies';
@@ -6,6 +6,10 @@ import { ViewDocumentModalComponent } from './view-document-modal.component';
 
 import { CreateDocumentComponent } from './create-document/create-document.component';
 import { document } from 'ngx-bootstrap/utils';
+import { HttpEventType } from '@angular/common/http';
+import { DownloadFileService } from './download-file/download-file';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+
 @Component({
     templateUrl: './documents.component.html',
     animations: [appModuleAnimation()],
@@ -16,15 +20,20 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     private viewDocumentModal !: ViewDocumentModalComponent;
     @ViewChild('createDocumentModal', { static: false }) createDocumentModal: CreateDocumentComponent;
 
-    documents: DocumentListDto[] = [];
+    documents: any[] = [];
     filter: string = '';
     documentsWithoutFilter: any = [];
-    suggestDocuments: DocumentListDto[];
+    suggestDocuments: any[];
     selectedDocuments: any;
+
+    
+    // Handle Confirm Box
+    modalRef: BsModalRef;   
+    // End Handle Confirm Box
 
     // Advanced Search
     // General
-    results: DocumentListDto[] = [];
+    results: any[] = [];
     searchParams: any = {};
     noResultsFound: boolean = false;
     advancedSearch: boolean = false;
@@ -43,7 +52,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _DocumentService: DocumentServiceProxy
+        private _DocumentService: DocumentServiceProxy,
+        private _DownloadFileService: DownloadFileService,
+        private _ModalService: BsModalService,
     ) {
         super(injector);
     }
@@ -60,7 +71,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     onSearchSubmit(event): void {
         const filter = event
         this._DocumentService.getDocuments(filter).subscribe((result) => {
-            this.documents = result.items;
+            this.documents = result.items.map(
+                document => {
+                    return { ...document, isChecked: false}
+                }
+            )
         });
       }
 
@@ -68,17 +83,26 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         console.log(this.selectedDocuments)
         const filter = typeof this.selectedDocuments == 'string' ? this.selectedDocuments : this.selectedDocuments?.title
         this._DocumentService.getDocuments(filter).subscribe((result) => {
-            this.documents = result.items;
+            this.documents = result.items.map(
+                document => {
+                    return { ...document, isChecked: false}
+                }
+            )  
         });
     }
 
     getDocuments(): void {
         this._DocumentService.getDocuments(this.filter).subscribe((result) => {
-            this.documents = result.items;
-            this.documentsWithoutFilter = result.items;
+            this.documents = result.items.map(
+                document => {
+                    return { ...document, isChecked: false}
+                }
+            )
+            
+            this.documentsWithoutFilter = this.documents;
         });
     }
-    show(document: DocumentListDto){
+    show(document: any){
         this.viewDocumentModal.show(document);
     }
     openPdfInNewTab(fileName: string){
@@ -272,7 +296,66 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         this.searchParams.code = value;
     }
 
+    // Download
 
+    public progress: number;
+    
+    download = (fileName) => {
+        this._DownloadFileService.downloadFile(fileName).subscribe((event) => {
+            if (event.type === HttpEventType.UploadProgress)
+                this.progress = Math.round((100 * event.loaded) / event.total);
+
+            else if (event.type === HttpEventType.Response) {
+                const downloadFile = new Blob([event.body], { type: event.body.type });
+                const a = document.createElement('a');
+                a.setAttribute('style', 'display:none;');
+                document.body.appendChild(a);
+                a.download = fileName;
+                a.href = URL.createObjectURL(downloadFile);
+                a.target = '_blank';
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+    }
+
+    // End Download    
+
+    // Handle Multi Checkbox
+    downloadAll(): void {
+        this.documents.filter(document => document.isChecked).forEach(document => {
+            this.download(document.fileName)
+        });
+    }
+
+    onChange(id: number, isChecked: boolean): void
+    {   
+        isChecked = !isChecked;
+        this.documents.forEach(document => {
+            if (document.id === id) {
+                document.isChecked = isChecked;
+            }
+        })
+    }
+    onChangeAll(): void {
+        // Not Handle 
+    }
+    // End Handle Multi Checkbox
+
+    // Handle Confirm Box
+    openModal(template: TemplateRef<any>) {
+        this.modalRef = this._ModalService.show(template, {class: 'modal-sm'});
+    }
+
+    confirm(): void {     
+        this.modalRef.hide();
+        this.downloadAll();
+    }
+
+    decline(): void {
+        this.modalRef.hide();
+    }
+    // End Handle Confirm Box
 
 }
 

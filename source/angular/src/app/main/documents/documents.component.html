@@ -229,9 +229,20 @@
                             "
                             onmouseover="this.style.backgroundColor='#06b131'"
                             onmouseout="this.style.backgroundColor='#07c938'"
+                            (click)="openModal(template)"
                         >
                             Tải xuống
                         </button>
+                        <ng-template #template>
+                            <div class="modal-body text-center">
+                                <p class="confirmation-text">Bạn có chắc không?</p>
+                                <p class="instruction">Toàn văn của văn bản bạn chọn sẽ được tải xuống</p>
+                                <div>
+                                    <button type="button" class="btn btn-default" (click)="decline()" >Huỷ</button>
+                                    <button type="button" class="btn btn-primary" (click)="confirm()" >Đồng ý</button>
+                                </div>
+                            </div>        
+                        </ng-template>
                     </div>
                 </div>
             </form>
@@ -314,7 +325,10 @@
                                 <ng-template pTemplate="body" let-document>
                                     <tr>
                                         <td>
-                                            <p-tableCheckbox [value]="document"></p-tableCheckbox>
+                                            <p-tableCheckbox 
+                                                [value]="document"
+                                                (click)="onChange(document.id, document.isChecked)"   
+                                            ></p-tableCheckbox>
                                         </td>
                                         <td>
                                             <div class="btn-group" dropdown placement="bottom left" container="body">
@@ -373,6 +387,7 @@
                                                         <a
                                                             href="javascript:;"
                                                             class="dropdown-item"
+                                                            (click)="download(document.fileName)"
                                                         >
                                                             Tải xuống
                                                         </a>

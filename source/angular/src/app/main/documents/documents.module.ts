@@ -11,14 +11,16 @@ import { LoaiVanBanComponent } from './loai-van-ban/loai-van-ban.component';
 import { CreateDocumentComponent } from './create-document/create-document.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
 import { FileUploadModule } from 'primeng/fileupload';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
     declarations: [DocumentsComponent, ViewDocumentModalComponent, LoaiVanBanComponent, CreateDocumentComponent, UploadFileComponent],
     imports: [AppSharedModule, DocumentsRoutingModule, SubheaderModule,
         InputTextModule,
         AutoCompleteModule,
         ButtonModule,
-        FileUploadModule
+        FileUploadModule,
+        FormsModule,
+        ReactiveFormsModule
 ]
 
 })

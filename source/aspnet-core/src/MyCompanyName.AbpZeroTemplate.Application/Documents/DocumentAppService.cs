@@ -11,10 +11,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MyCompanyName.AbpZeroTemplate.Dto;
+using Abp.Collections.Extensions;
+using Abp.AspNetZeroCore.Net;
+using System.IO;
 
 namespace MyCompanyName.AbpZeroTemplate.Documents
 {
-    public class DocumentAppService: AbpZeroTemplateAppServiceBase, IDocumentAppServive
+    public class DocumentAppService : AbpZeroTemplateAppServiceBase, IDocumentAppServive
     {
         private readonly IRepository<Document> _DocumentRepository;
 
@@ -56,6 +60,7 @@ namespace MyCompanyName.AbpZeroTemplate.Documents
                 FileName = input.FileName,  // Group 10 code field FileName 
             });
             await CurrentUnitOfWork.SaveChangesAsync();
+
         }
     }
 }
