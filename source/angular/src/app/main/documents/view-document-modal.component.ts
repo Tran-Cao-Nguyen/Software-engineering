@@ -4,6 +4,7 @@ import { DocumentListDto, DocumentServiceProxy } from '@shared/service-proxies/s
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { HttpClient } from '@angular/common/http';
 import { error } from 'console';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'viewDocumentModal',
@@ -16,9 +17,10 @@ export class ViewDocumentModalComponent extends AppComponentBase {
     @Input() document!: DocumentListDto;
 
     active: boolean = false;
-    private http: HttpClient;
+    
 
     constructor(
+        private http: HttpClient,
         injector: Injector,
         private _documentService: DocumentServiceProxy
     ) {
@@ -41,15 +43,24 @@ export class ViewDocumentModalComponent extends AppComponentBase {
 
     }
     openPdfInNewTab(fileName: string) {
-        const pdfUrl = 'assets/pdf/'+ fileName; // Đường dẫn đến tệp PDF trong thư mục 'assets/'
-        this.createBlobUrl(pdfUrl); // Gọi hàm để tạo Blob URL từ tệp PDF
-      }
-    
-      createBlobUrl(pdfUrl: string) {
-        fetch(pdfUrl).then(response => response.blob()).then(blob => {
-          const blobUrl = URL.createObjectURL(blob); // Tạo Blob URL từ Blob
-          window.open(blobUrl, '_blank'); // Mở Blob URL trong tab mới
+        // Gọi hàm downloadFile để tải tệp PDF từ máy chủ
+        this.downloadFile(fileName).subscribe(responseBlob => {
+            // Tạo Blob URL từ Blob
+            const blobUrl = URL.createObjectURL(responseBlob);
+            // Mở Blob URL trong tab mới
+            const newTab = window.open(blobUrl, '_blank');
+            if (!newTab) {
+                console.error('Failed to open file in new tab.');
+            }
+        }, error => {
+            console.error('Error downloading file:', error);
         });
-      }
+    }
+    
+    downloadFile(filename: string): Observable<Blob> {
+        const url = `https://localhost:44301/api/FileUpload/DownloadFile?filename=${encodeURIComponent(filename)}`;
+    
+        return this.http.get(url, { responseType: 'blob' });
+    }
 
 }
