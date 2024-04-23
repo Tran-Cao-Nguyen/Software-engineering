@@ -229,17 +229,17 @@
                             "
                             onmouseover="this.style.backgroundColor='#06b131'"
                             onmouseout="this.style.backgroundColor='#07c938'"
-                            (click)="openModal(template)"
+                            (click)="openModal(templateAll)"
                         >
                             Tải xuống
                         </button>
-                        <ng-template #template>
+                        <ng-template #templateAll>
                             <div class="modal-body text-center">
                                 <p class="confirmation-text">Bạn có chắc không?</p>
                                 <p class="instruction">Toàn văn của văn bản bạn chọn sẽ được tải xuống</p>
                                 <div>
                                     <button type="button" class="btn btn-default" (click)="decline()" >Huỷ</button>
-                                    <button type="button" class="btn btn-primary" (click)="confirm()" >Đồng ý</button>
+                                    <button type="button" class="btn btn-primary" (click)="confirmAll()" >Đồng ý</button>
                                 </div>
                             </div>        
                         </ng-template>
@@ -387,10 +387,20 @@
                                                         <a
                                                             href="javascript:;"
                                                             class="dropdown-item"
-                                                            (click)="download(document.fileName)"
+                                                            (click)="openModal(template)"
                                                         >
                                                             Tải xuống
                                                         </a>
+                                                        <ng-template #template>
+                                                            <div class="modal-body text-center">
+                                                                <p class="confirmation-text">Bạn có chắc không?</p>
+                                                                <p class="instruction">Toàn văn của văn bản bạn chọn sẽ được tải xuống</p>
+                                                                <div>
+                                                                    <button type="button" class="btn btn-default" (click)="decline()" >Huỷ</button>
+                                                                    <button type="button" class="btn btn-primary" (click)="confirm(document.fileName)" >Đồng ý</button>
+                                                                </div>
+                                                            </div>        
+                                                        </ng-template>
                                                     </li>
                                                     <li
                                                         role="menuitem"
