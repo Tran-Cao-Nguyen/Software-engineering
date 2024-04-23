@@ -29,6 +29,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
     
     // Handle Confirm Box
     modalRef: BsModalRef;   
+    checkedArray: any[] = []
     // End Handle Confirm Box
 
     // Advanced Search
@@ -338,24 +339,44 @@ export class DocumentsComponent extends AppComponentBase implements OnInit {
         })
     }
     onChangeAll(): void {
-        // Not Handle 
+        this.checkedArray = this.documents.filter(document => document.isChecked == false)
+        
+        if (this.checkedArray.length == 0) {
+            this.documents.forEach(document => {
+                document.isChecked = false;
+            })
+        } else {
+            this.documents.forEach(document => {
+                if (document.isChecked == false) {
+                    document.isChecked = true;
+                }
+            })
+        }
     }
     // End Handle Multi Checkbox
 
     // Handle Confirm Box
+    openModalAll(template: TemplateRef<any>) {
+        this.modalRef = this._ModalService.show(template, {class: 'modal-sm'});
+    }
+
     openModal(template: TemplateRef<any>) {
         this.modalRef = this._ModalService.show(template, {class: 'modal-sm'});
     }
 
-    confirm(): void {     
+    confirmAll(): void {     
         this.modalRef.hide();
         this.downloadAll();
     }
 
+    confirm(fileName): void {
+        this.modalRef.hide();
+        this.download(fileName)
+    }
     decline(): void {
         this.modalRef.hide();
     }
     // End Handle Confirm Box
-
+    
 }
 
