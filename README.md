@@ -14,8 +14,8 @@ This project is about working with ASP.NET Zero framework to build a part of the
 - Step 5: Open _Package mangage console_ window, set _.EntitiFrameworkCore_ as default project then input the instruction __Add-Migration “Added_Documents_Table”_
 - Step 6: Input the instruction __Update-Database__
 - Step 7: Open angular folder in Visual Studio Code or any IDE which you are using and run following instruction one by one:
-__yarn__ 
-__npm run create-dynamic-bundles__
+  - __yarn__ 
+  - __npm run create-dynamic-bundles__
 - Step 8: Run _IIS_ in Visual Studio
 - Step 9: In Visual Studio Code navigate into directory angular/nswag and run __./refresh.bat__
 - Step 10: Return to angular folder then run __npm start__
